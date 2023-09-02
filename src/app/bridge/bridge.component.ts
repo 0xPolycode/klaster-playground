@@ -3,6 +3,7 @@ import { PolycodeService } from '../shared/polycode.service';
 import { BehaviorSubject } from 'rxjs';
 import { networks } from '../shared/networks';
 import { FormControl, Validators } from '@angular/forms';
+import { BlockchainService } from '../shared/blockchain.service';
 
 @Component({
   selector: 'app-bridge',
@@ -38,7 +39,9 @@ export class BridgeComponent implements OnInit {
 
   tokenAmountFormControl = new FormControl("", [Validators.required])
 
-  constructor(private pc: PolycodeService) { }
+  network$ = this.blockchainService.network$
+
+  constructor(private pc: PolycodeService, private blockchainService: BlockchainService) { }
 
   toggleNetworkSelectModal() {
     this.selectNetworkModalVisibleSub.next(!this.selectNetworkModalVisibleSub.value)
@@ -83,17 +86,7 @@ export class BridgeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    setTimeout(() => {
-      this.pc.getTokens().then(res => {
-        res.return_values[0].forEach((item: any) => {
-          if(item[4] > 0) {
-            this.itemsSub.next(this.itemsSub.value.concat([
-              { name: item[1], balance: item[4], symbol: item[2], address: item[0] }
-            ]))
-          }
-        })
-      })
-    }, 1000);
+
     
   }
 

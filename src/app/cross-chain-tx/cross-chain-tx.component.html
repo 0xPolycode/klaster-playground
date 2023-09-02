@@ -16,13 +16,13 @@
                 </div>
                 <!-- <div class="mt-4 uppercase font-bold text-indigo-700 text-sm">Steps</div> -->
     
-                <div class="w-full mt-10 grid grid-cols-9 gap-x-4 rounded-md border-slate-100">
+                <div *ngIf="network$ | async as network" class="w-full mt-10 grid grid-cols-9 gap-x-4 rounded-md border-slate-100">
                     <div class="col-span-9 text-rose-700 uppercase mb-2 flex flex-row gap-x-2 items-center font-semibold text-xs">
                         Signing transaction on
                     </div>
                     <div class="w-full py-3 bg-slate-50 flex flex-row items-center text-xs uppercase gap-x-3 font-semibold text-slate-700 col-span-9 border-slate-100 rounded-md px-6 border">
-                        <img class="h-6" src="../../assets/avax-logo.png" alt="" srcset="">
-                        Avalanche Fuji
+                        <img class="h-6" src="../../assets/{{network.logoUri}}" alt="" srcset="">
+                        {{network.name}}
                     </div>
                 </div>
     
@@ -116,11 +116,7 @@
                 Execute Cross-Chain Swap
             </div>
     
-            <a target="_blank" href="https://chain.link/cross-chain" class="mt-4 text-center text-[10px] text-slate-400 flex flex-col items-center gap-y-2">
-                Built on Chainlink CCIP
-                <img class="h-4 w-4" src="../../assets/ccip.png" alt="" srcset="">
-    
-            </a>
+
     
         </div>
     </ng-template>

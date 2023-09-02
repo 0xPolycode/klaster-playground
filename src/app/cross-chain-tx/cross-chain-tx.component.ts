@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Network } from '../shared/networks';
+import { Network, networks } from '../shared/networks';
 import { PolycodeService } from '../shared/polycode.service';
 import { FormControl } from '@angular/forms';
 import { arrayify } from 'ethers/lib/utils';
+import { BlockchainService } from '../shared/blockchain.service';
 
 @Component({
   selector: 'app-cross-chain-tx',
@@ -16,20 +17,9 @@ export class CrossChainTxComponent implements OnInit {
   amountSend = new FormControl('')
   amountReceive = new FormControl('')
 
-  chains: Network[] = [
-    {
-      chainId: 11155111,
-      logoUri: 'eth.png',
-      name: 'Ethereum Sepolia'
-    },
-    {
-      chainId: 420,
-      logoUri: 'op.png',
-      name: 'Optimism Goerli'
-    }
-  ]
+  chains = networks
 
-  selectedChainSub = new BehaviorSubject<Network>(this.chains[0])
+  selectedChainSub = new BehaviorSubject<Network>(networks[0])
   selectedChain$ = this.selectedChainSub.asObservable()
 
   selectChainVisibleSub = new BehaviorSubject(false)
@@ -38,7 +28,9 @@ export class CrossChainTxComponent implements OnInit {
   hashSub = new BehaviorSubject<string | undefined>("")
   hash$ = this.hashSub.asObservable()
 
-  constructor(private ps: PolycodeService) { }
+  network$ = this.blockchainService.network$
+
+  constructor(private ps: PolycodeService, private blockchainService: BlockchainService) { }
 
   ngOnInit(): void {
   }

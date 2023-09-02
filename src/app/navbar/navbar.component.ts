@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { PolycodeService } from '../shared/polycode.service';
+import { BlockchainService } from '../shared/blockchain.service';
+import { BehaviorSubject, map, take } from 'rxjs';
+import { networks } from '../shared/networks';
 
 @Component({
   selector: 'app-navbar',
@@ -8,15 +11,30 @@ import { PolycodeService } from '../shared/polycode.service';
 })
 export class NavbarComponent implements OnInit {
 
-  address$ = this.pc.address$
+  address$ = this.blockchainService.account$
+  network$ = this.blockchainService.network$
 
-  constructor(private pc: PolycodeService) { }
+  networkSelectorOpenSub = new BehaviorSubject(false)
+  networkSelectorOpen$ = this.networkSelectorOpenSub.asObservable()
+
+  supportedNetworks = networks
+
+  constructor(private blockchainService: BlockchainService) { }
 
   ngOnInit(): void {
   }
 
+  toggleNetworkSelector() {
+    this.networkSelectorOpenSub.next(!this.networkSelectorOpenSub.value)
+  }
+
   logOut() {
-    this.pc.logOut()
+    this.blockchainService.logOut()
+  }
+
+  changeNetwork(chainId: number) {
+    this.networkSelectorOpenSub.next(false)
+    this.blockchainService.changeNetwork(chainId)
   }
 
 }

@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { PolycodeService } from './shared/polycode.service';
+import { BlockchainService } from './shared/blockchain.service';
 
 @Component({
   selector: 'app-root',
@@ -10,12 +11,13 @@ import { PolycodeService } from './shared/polycode.service';
 export class AppComponent {
   title = 'multichain-token';
 
-  address$ = this.pc.address$
+  address$ = this.blockchainService.account$
 
-  constructor(private pc: PolycodeService) {}
+  constructor(private blockchainService: BlockchainService) {}
+
 
   authWallets() {
-    this.pc.authWallet()
+    this.blockchainService.auth()
   }
 
 }

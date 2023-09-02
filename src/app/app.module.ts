@@ -10,6 +10,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ShortenPipe } from './shared/pipes/shorten.pipe';
 import { LoaderComponent } from './shared/components/loader/loader.component';
 import { CrossChainTxComponent } from './cross-chain-tx/cross-chain-tx.component';
+import { WrapComponent } from './wrap/wrap.component';
+import { PayComponent } from './pay/pay.component';
+import { LendComponent } from './lend/lend.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +22,10 @@ import { CrossChainTxComponent } from './cross-chain-tx/cross-chain-tx.component
     NavbarComponent,
     ShortenPipe,
     LoaderComponent,
-    CrossChainTxComponent
+    CrossChainTxComponent,
+    WrapComponent,
+    PayComponent,
+    LendComponent
   ],
   imports: [
     BrowserModule,
