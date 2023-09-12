@@ -30,6 +30,10 @@
 
 </div>
 
+<div class="w-screen h-screen bg-gradient-to-b from-rose-50 to-white flex flex-row justify-center items-center" *ngIf="(hasProvider$ | async) === false">
+  <div class="text-xl leading-relaxed text-center">You must have a wallet. <br> Please install a Web3 wallet to use the app.</div>
+</div>
+
 <ng-template #authWallet>
   <div class="w-full h-screen flex flex-row justify-center items-center">
     <button (click)="authWallets()" class="app-button max-w-md flex flex-row justify-center items-center">
