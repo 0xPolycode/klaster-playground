@@ -48,15 +48,15 @@ export class BlockchainService {
     this.handleNetworkReload()
     this.handleAccountReload()
 
-    const account = this.getAccount()
-    if(account) {
-      this.provider.on('block', () => {
-        this.provider.getBalance(account).then(balance => {
-          this.balanceSub.next(balance)
-        })
-      })
-    }
 
+    this.provider.on('block', () => {
+        const account = this.getAccount()
+        if(account) {
+          this.provider.getBalance(account).then(balance => {
+            this.balanceSub.next(balance)
+          })
+        }
+      })
   }
 
   handleAccountReload() {
@@ -64,6 +64,7 @@ export class BlockchainService {
     (provider.provider as any).on('accountsChanged', (accounts: any) => {
       this.accountSub.next(accounts[0])
       window.location.reload()
+      this.provider.getBalance(this.getAccount()!).then(balance => { this.balanceSub.next(balance) })
     })
   }
 
@@ -73,6 +74,7 @@ export class BlockchainService {
         if (oldNetwork) {
             window.location.reload();
         }
+        this.provider.getBalance(this.getAccount()!).then(balance => { this.balanceSub.next(balance) })
     });
     
   }
