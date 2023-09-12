@@ -36,4 +36,21 @@ export class BridgeService {
     )
   }
 
+  async bridgeToken(tokenAddress: string, destinationChain: number, bridgeAmount: number, bridgeReceiver: string) {
+
+    const token = new ethers.Contract(tokenAddress, KlasterERC20, this.blockchainService.provider.getSigner())
+
+    return await token['rtc'](
+      destinationChain,
+      bridgeAmount,
+      bridgeReceiver,
+      0,
+      '0x0000000000000000000000000000000000000000',
+      [],
+      250000,
+      false
+    )
+
+  }
+
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PolycodeService } from '../shared/polycode.service';
-import { BehaviorSubject, combineLatest, from, map, switchMap, take } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, from, map, switchMap, take } from 'rxjs';
 import { networks } from '../shared/networks';
 import { FormControl, Validators } from '@angular/forms';
 import { BlockchainService } from '../shared/blockchain.service';
@@ -13,7 +13,6 @@ import { BridgeService } from './bridge.service';
 })
 export class BridgeComponent implements OnInit {
 
-  itemsSub = new BehaviorSubject<{name: string, balance: number, symbol: string, address: string}[]>([])
 
   selectedDestinationSub = new BehaviorSubject("Optimsim Goerli")
   selectedDestination$ = this.selectedDestinationSub.asObservable()
@@ -43,6 +42,7 @@ export class BridgeComponent implements OnInit {
   network$ = this.blockchainService.network$
 
   chains = networks
+
 
 
   tokens$ = from(this.bridgeService.getMyTokens()).pipe(
@@ -107,13 +107,26 @@ export class BridgeComponent implements OnInit {
 
     this.bridgeProcessingSub.next(true)
 
-    const token = this.itemsSub.value[this.selectedTokenIndexSub.value - 1].address
     const network = this.networks.filter(network => network.chainId === this.selectedNetworkChainIdSub.value).at(0)!.chainId
     const amount = this.tokenAmountFormControl.value
 
-    this.pc.bridgeToken(token, network, parseInt(amount!)).then(res => {
-      this.tokenBridgedHashSub.next(res.transactionHash ?? "")
-      this.bridgeProcessingSub.next(false)
+    combineLatest([
+      this.tokens$,
+      this.selectedTokenIndex$
+    ]).pipe(
+      map(([tokens, index]) => {
+        return tokens[index - 1]
+      }),
+      switchMap(token => {
+        return from(this.bridgeService.bridgeToken(
+          token.address,
+          network,
+          parseInt(amount!),
+          this.blockchainService.getAccount()!
+        ))
+      })
+    ).subscribe(res => {
+      this.tokenBridgedHashSub.next(res.hash)
     })
   }
 
