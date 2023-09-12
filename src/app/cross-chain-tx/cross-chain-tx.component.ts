@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, from, map, of, switchMap, take, tap } from 'rxjs';
 import { Network, networks } from '../shared/networks';
 import { PolycodeService } from '../shared/polycode.service';
 import { FormControl } from '@angular/forms';
 import { arrayify } from 'ethers/lib/utils';
 import { BlockchainService } from '../shared/blockchain.service';
+import { SwapService } from './swap.service';
+import { ethers } from 'ethers';
 
 @Component({
   selector: 'app-cross-chain-tx',
@@ -17,9 +19,52 @@ export class CrossChainTxComponent implements OnInit {
   amountSend = new FormControl('')
   amountReceive = new FormControl('')
 
-  chains = networks
+  sendWarning$ = combineLatest([
+    this.amountSend.valueChanges,
+    from(this.swapService.getTokenBalance("0x114CF2089c88D64Ae9c3FDc90E8fD568E79B9681"))
+  ]).pipe(
+    map(([inputValue, balance]) => {
+      if(inputValue) {
+        const inputN = ethers.BigNumber.from(inputValue)
+        if(inputN.gt(balance)) {
+          return `Maximum send exceeded. Your balance is: ${balance}`
+        } else {
+          return null
+        }
+      } else {
+        return null
+      }
+    })
+  )
 
-  selectedChainSub = new BehaviorSubject<Network>(networks[0])
+  txHashSub = new BehaviorSubject<string | null>(null)
+  txHash$ = this.txHashSub.asObservable()
+
+  receiveAmount$ = this.amountSend.valueChanges.pipe(
+    debounceTime(300),
+    switchMap(value => {
+      if(!value) {
+        return of(null)
+      }
+      return from(this.swapService.calculateReceiveUniswap(
+        this.selectedChainSub.value.chainId,
+        parseInt(value),
+      ))
+    })
+  )
+
+  isButtonLoadingSub = new BehaviorSubject(false)
+  isButtonLoading$ = this.isButtonLoadingSub.asObservable()
+
+  isButtonDisabled$ = this.amountSend.valueChanges.pipe(
+    map(value => {
+      return false
+    })
+  )
+
+  chains = networks.filter(network => network.chainId !== 43113)
+
+  selectedChainSub = new BehaviorSubject<Network>(networks[1])
   selectedChain$ = this.selectedChainSub.asObservable()
 
   selectChainVisibleSub = new BehaviorSubject(false)
@@ -30,28 +75,50 @@ export class CrossChainTxComponent implements OnInit {
 
   network$ = this.blockchainService.network$
 
-  constructor(private ps: PolycodeService, private blockchainService: BlockchainService) { }
+  tokenBalanceSub = new BehaviorSubject<{ balance: number }>({ balance: -1})
+  tokenBalance$ = this.tokenBalanceSub.asObservable().pipe(
+    take(2)
+  )
+
+  balanceMessage$ = this.tokenBalance$.pipe(
+    map(balance => balance.balance === -1 ? "_" : balance.balance.toString())
+  )
+
+  swapTxHashSub = new BehaviorSubject<string | null>(null)
+  swapTxHash$ = this.swapTxHashSub.asObservable()
+
+  constructor(private blockchainService: BlockchainService, private swapService: SwapService) { }
 
   ngOnInit(): void {
-  }
-
-  
-
-  performCrossChainSwap() {
-    this.ps.rtc(
-      "0x114CF2089c88D64Ae9c3FDc90E8fD568E79B9681",
-      420,
-      0,
-      "0x0000000000000000000000000000000000000000",
-      BigInt("1000000000000000000"),
-      "0x8d2915D89912Ba7bfBe2a5EA20BE6A1BBea7DB94",
-      arrayify("0x38ed17390000000000000000000000000000000000000000000000000de0b6b3a7640000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a000000000000000000000000072aed714af254414ebe14949310738cb60a607900000000000000000000000000000000000000000000000000000000064fd01fa0000000000000000000000000000000000000000000000000000000000000002000000000000000000000000114cf2089c88d64ae9c3fdc90e8fd568e79b9681000000000000000000000000fc50147680cceca0050123d0cd4304f35fcf7e5c"),
-      2000000,
-      true
-    ).then(res => {
-      this.hashSub.next(res.transactionHash)
+    this.swapService.getTokenBalance("0x114CF2089c88D64Ae9c3FDc90E8fD568E79B9681").then((balance: ethers.BigNumber) => {
+      console.log(balance.toNumber())
+      this.tokenBalanceSub.next({balance: balance.toNumber()})
     })
 
+    this.swapService.calculateReceiveUniswap(420, 55).then(res => {
+      console.log("REEES", res.toString())
+    })
+  }
+
+  performCrossChainSwap() {
+    this.isButtonLoadingSub.next(true)
+    this.swapService.swapTokens("0x114CF2089c88D64Ae9c3FDc90E8fD568E79B9681", 
+    this.selectedChainSub.getValue().chainId,
+    parseInt(this.amountSend.value!)).then(result => {
+      this.swapTxHashSub.next(result.hash)
+      this.isButtonLoadingSub.next(false)
+    }).catch(err => {
+      alert(err)
+      this.isButtonLoadingSub.next(false)
+    })
+  }
+
+  mintTokenA() {
+    this.swapService.mintToken(
+      "0x114CF2089c88D64Ae9c3FDc90E8fD568E79B9681"
+    ).then(() => {
+      alert("Success")
+    })
   }
 
   toggleSelectChainVisibility() {

@@ -1,4 +1,4 @@
-<div class="w-screen h-screen flex flex-col items-center mt-24">
+<div *ngIf="(swapTxHash$ | async) === null" class="w-screen h-screen flex flex-col items-center mt-24">
 
     <div *ngIf="hash$ | async as hash; else uni">
         <div>{{hash}}</div>
@@ -53,13 +53,21 @@
     
     
     
-                <div class="w-full mt-4 grid grid-cols-7 gap-x-4 rounded-md border-slate-100">
+                <div *ngIf="tokenBalance$ | async as balance" class="w-full mt-4 grid grid-cols-7 gap-x-4 rounded-md border-slate-100">
                     <div class="col-span-6 text-rose-700 uppercase mb-2 font-semibold text-xs">
                         You Send
                     </div>
     
-                    <input [formControl]="amountSend" class="border col-span-4 h-full py-3 w-full px-6 text-sm rounded-md border-slate-100 font-mono outline-none" 
-                placeholder="Amount" type="text" name="" id="">
+                    <input *ngIf="balanceMessage$ | async as message" 
+                        [formControl]="amountSend" 
+                        class="border col-span-4 h-full
+                            py-3 w-full px-6 text-sm
+                            rounded-md border-slate-100
+                            font-mono outline-none" 
+                        [placeholder]="message" 
+                        type="text" 
+                        name="" 
+                        id="">
     
                     <div class="col-span-3">
                         <div class="border border-slate-100 rounded-md bg-slate-50 text-xs uppercase font-semibold 
@@ -74,15 +82,35 @@
                 
     
                 </div>
+
+                <ng-container *ngIf="tokenBalance$ | async as balance">
+
+                    <div *ngIf="balance.balance === 0" class="text-amber-600 text-xs mt-1 font-medium">
+                        You don't have any tokens for swapping. Click 
+                        <span (click)="mintTokenA()" class="underline cursor-pointer hover:text-red-700" href="">here</span> 
+                        to mint test tokens.
+                    </div>
+                </ng-container>
+
+                <div class="mt-2 bg-amber-50 text-xs py-2 px-4 rounded-md text-red-500 font-medium" 
+                    *ngIf="sendWarning$ | async as warning">
+                    {{warning}}
+                </div>
     
+                
     
                 <div class="w-full mt-4 grid grid-cols-7 gap-x-4 rounded-md border-slate-100">
                     <div class="col-span-6 text-rose-700 uppercase mb-2 font-semibold text-xs">
                         You Receive
                     </div>
     
-                    <input [formControl]="amountReceive" class="border col-span-4 h-full py-3 w-full px-6 text-sm rounded-md border-slate-100 font-mono outline-none" 
+                    <div class="border font-semibold col-span-4 h-full py-3 w-full bg-slate-50 px-6 text-sm rounded-md border-slate-100 font-mono outline-none" 
                 placeholder="Amount" type="text" name="" id="">
+                    <span *ngIf="receiveAmount$ | async as receive">
+                        {{receive}}
+                    </span>
+            </div>
+
     
                     <div class="col-span-3">
                         <div class="border border-slate-100 rounded-md bg-slate-50 text-xs uppercase font-semibold 
@@ -107,13 +135,20 @@
                 </div>
             </div>
         
-            <div (click)="performCrossChainSwap()" class="mt-4 bg-gradient-to-r from-fuchsia-700 to-rose-600 flex flex-row items-center transition-all
+
+            <button *ngIf="(isButtonLoading$ | async) === false" (click)="performCrossChainSwap()" [disabled]="isButtonDisabled$ | async"
+             class="mt-4 bg-gradient-to-r from-fuchsia-700 w-full disabled:cursor-text to-rose-600 flex flex-row items-center transition-all
              text-white py-3 justify-center rounded-md text-xs uppercase gap-x-2 font-semibold cursor-pointer hover:from-fuchsia-800 hover:to-rose-800">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
                   </svg>
                   
                 Execute Cross-Chain Swap
+            </button>
+
+            <div *ngIf="(isButtonLoading$ | async)" 
+                class="w-full text-center py-3 bg-slate-100 mt-2 animate-pulse text-xs uppercase font-semibold">
+                Signing TX...
             </div>
     
             <a target="_blank" href="https://chain.link/cross-chain" class="mt-4 text-center text-[10px] text-slate-400 flex flex-col items-center gap-y-2">
@@ -140,5 +175,19 @@
             <img class="h-8" src="../../assets/{{chain.logoUri}}" alt="" srcset="">
             <div>{{chain.name}}</div>
         </div>
+    </div>
+</div>
+
+<div class="w-full flex flex-row justify-center text-slate-600" *ngIf="swapTxHash$ | async as hash">
+    <div class="mt-24 p-8 bg-white max-w-xl w-full shadow-sm flex flex-col">
+        <div class="text-center uppercase font-bold text-lg text-transparent bg-clip-text bg-gradient-to-r from-rose-600 to-fuchsia-700">You have initiated a cross-chain swap.</div>
+        <div class="mt-8 text-center text-slate-500">
+            Depending on the network, it may take anywhere from 4 - 40 minutes for the swap to complete!
+        </div>
+        <a target="_blank" href="https://ccip.chain.link/tx/{{hash}}" 
+        class="bg-gradient-to-r from-rose-600 to-fuchsia-700 text-white mt-8 text-center py-3 cursor-pointer
+            rounded-md font-semibold uppercase text-sm hover:from-rose-800 hover:to-fuchsia-800 w-full">
+            Check Cross-Chain TX State
+        </a>
     </div>
 </div>

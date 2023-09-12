@@ -13,6 +13,8 @@ import { CrossChainTxComponent } from './cross-chain-tx/cross-chain-tx.component
 import { WrapComponent } from './wrap/wrap.component';
 import { PayComponent } from './pay/pay.component';
 import { LendComponent } from './lend/lend.component';
+import { GatewayComponent } from './gateway/gateway.component';
+import { SafePipe } from './shared/pipes/safe.pipe';
 
 @NgModule({
   declarations: [
@@ -25,7 +27,9 @@ import { LendComponent } from './lend/lend.component';
     CrossChainTxComponent,
     WrapComponent,
     PayComponent,
-    LendComponent
+    LendComponent,
+    GatewayComponent,
+    SafePipe
   ],
   imports: [
     BrowserModule,

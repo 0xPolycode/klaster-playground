@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { PolycodeService } from '../shared/polycode.service';
 import { BlockchainService } from '../shared/blockchain.service';
-import { BehaviorSubject, map, take } from 'rxjs';
+import { BehaviorSubject, filter, map, take } from 'rxjs';
 import { networks } from '../shared/networks';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -19,7 +20,17 @@ export class NavbarComponent implements OnInit {
 
   supportedNetworks = networks
 
-  constructor(private blockchainService: BlockchainService) { }
+  isUnsupportedNetwork$ = this.network$.pipe(
+    map(network => {
+      const supported =  this.supportedNetworks.filter(supportedNetwork => supportedNetwork.chainId === network?.chainId)
+      return supported.length == 0
+    })
+  )
+
+  routerA = this.router
+
+  constructor(private blockchainService: BlockchainService,
+    private router: Router) { }
 
   ngOnInit(): void {
   }
@@ -36,5 +47,6 @@ export class NavbarComponent implements OnInit {
     this.networkSelectorOpenSub.next(false)
     this.blockchainService.changeNetwork(chainId)
   }
+
 
 }

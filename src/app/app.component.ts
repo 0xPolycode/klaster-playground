@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, tap } from 'rxjs';
 import { PolycodeService } from './shared/polycode.service';
 import { BlockchainService } from './shared/blockchain.service';
 
@@ -12,6 +12,11 @@ export class AppComponent {
   title = 'multichain-token';
 
   address$ = this.blockchainService.account$
+  balance$ = this.blockchainService.balance$.pipe(
+    tap(balance => {
+      console.log(balance)
+    })
+  )
 
   constructor(private blockchainService: BlockchainService) {}
 

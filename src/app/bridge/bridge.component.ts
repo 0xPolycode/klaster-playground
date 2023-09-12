@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { PolycodeService } from '../shared/polycode.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, combineLatest, from, map, switchMap, take } from 'rxjs';
 import { networks } from '../shared/networks';
 import { FormControl, Validators } from '@angular/forms';
 import { BlockchainService } from '../shared/blockchain.service';
+import { BridgeService } from './bridge.service';
 
 @Component({
   selector: 'app-bridge',
@@ -41,7 +42,36 @@ export class BridgeComponent implements OnInit {
 
   network$ = this.blockchainService.network$
 
-  constructor(private pc: PolycodeService, private blockchainService: BlockchainService) { }
+  chains = networks
+
+
+  tokens$ = from(this.bridgeService.getMyTokens()).pipe(
+    map(tokens => {
+      return tokens.map((token: string[]) => {
+        return {
+          address: token[0],
+          name: token[1],
+          symbol: token[2],
+          decimals: token[3],
+          supply: token[4]
+        }
+      })
+    })
+  )
+
+  balance$ = combineLatest([
+    this.tokens$, this.selectedTokenIndex$
+  ]).pipe(
+    switchMap(([tokens, index]) => {
+      const token = tokens[index]
+      return from(this.bridgeService.getBalance(token.address))
+    })
+  )
+
+
+  constructor(private pc: PolycodeService, 
+    private blockchainService: BlockchainService,
+    private bridgeService: BridgeService) { }
 
   toggleNetworkSelectModal() {
     this.selectNetworkModalVisibleSub.next(!this.selectNetworkModalVisibleSub.value)
@@ -68,7 +98,9 @@ export class BridgeComponent implements OnInit {
   }
 
   setMaxValue() {
-    this.tokenAmountFormControl.setValue("300")
+    this.balance$.pipe(take(1)).subscribe(balance => {
+      this.tokenAmountFormControl.setValue(balance)
+    })
   }
 
   bridgeToken() {

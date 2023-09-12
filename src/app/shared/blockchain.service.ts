@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { BehaviorSubject, tap } from 'rxjs';
 import { Network, getNetworkFromChainID, networks } from './networks';
 import { hexlify } from 'ethers/lib/utils';
@@ -11,18 +11,29 @@ export class BlockchainService {
 
   private WALLET_KEY = 'klaster.storage.wallet-key'
 
-  private provider = new ethers.providers.Web3Provider((window as any).ethereum, "any")
+  provider = new ethers.providers.Web3Provider((window as any).ethereum, "any")
 
-  readProviders = networks.map(network => {
+  private readProviders = networks.map(network => {
     return { 
       chainId: network.chainId, 
       provider: new ethers.providers.JsonRpcProvider(network.rpcUrls[0]) }
   })
 
+  getReadProvider(chainId: number) {
+    return this.readProviders.filter(provider => provider.chainId === chainId).at(0)
+  }
+
   private accountSub = new BehaviorSubject<string | undefined>(undefined)
   account$ = this.accountSub.asObservable().pipe(
     tap(account => localStorage.setItem(this.WALLET_KEY, account ?? ""))
   )
+
+  private balanceSub = new BehaviorSubject<BigNumber>(BigNumber.from(0))
+  balance$ = this.balanceSub.asObservable()
+
+  getAccount() {
+    return this.accountSub.getValue()
+  }
 
   private networkSub = new BehaviorSubject<Network | undefined>(undefined)
   network$ = this.networkSub.asObservable()
@@ -35,6 +46,25 @@ export class BlockchainService {
     this.provider.getNetwork().then(network => this.networkSub.next(getNetworkFromChainID(network.chainId)))
 
     this.handleNetworkReload()
+    this.handleAccountReload()
+
+    const account = this.getAccount()
+    if(account) {
+      this.provider.on('block', () => {
+        this.provider.getBalance(account).then(balance => {
+          this.balanceSub.next(balance)
+        })
+      })
+    }
+
+  }
+
+  handleAccountReload() {
+    const provider = new ethers.providers.Web3Provider((window as any).ethereum, "any");
+    (provider.provider as any).on('accountsChanged', (accounts: any) => {
+      this.accountSub.next(accounts[0])
+      window.location.reload()
+    })
   }
 
   handleNetworkReload(){
@@ -44,6 +74,7 @@ export class BlockchainService {
             window.location.reload();
         }
     });
+    
   }
 
   auth() {
@@ -76,7 +107,6 @@ export class BlockchainService {
       location.reload()
     })
   }
-
 
   logOut() {
     this.accountSub.next(undefined)

@@ -12,18 +12,18 @@ export interface Network {
 }
 
 export const networks: Network[] = [
-    { 
-        chainId: 80001, 
-        name: 'Mumbai Matic', 
-        logoUri: 'matic.png', 
-        rpcUrls: ['https://polygon-mumbai-bor.publicnode.com'],
-        nativeCurrency: {
-            name: 'MATIC',
-            symbol: 'MATIC',
-            decimals: 18
-        },
-        blockExploreUrls: ['https://polygonscan.com/']
-    },
+    // { 
+    //     chainId: 80001, 
+    //     name: 'Mumbai Matic', 
+    //     logoUri: 'matic.png', 
+    //     rpcUrls: ['https://polygon-mumbai-bor.publicnode.com'],
+    //     nativeCurrency: {
+    //         name: 'MATIC',
+    //         symbol: 'MATIC',
+    //         decimals: 18
+    //     },
+    //     blockExploreUrls: ['https://polygonscan.com/']
+    // },
     {
         chainId: 43113,
         name: 'Avalanche Fuji',
@@ -40,7 +40,7 @@ export const networks: Network[] = [
         chainId: 420, 
         name: 'Optimism Goerli', 
         logoUri: 'op.png', 
-        rpcUrls: ['https://optimism-goerli.public.blastapi.io'],
+        rpcUrls: ['https://goerli.optimism.io'],
         nativeCurrency: {
             name: 'ETH',
             symbol: 'ETH',

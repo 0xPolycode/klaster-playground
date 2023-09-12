@@ -1,0 +1,1 @@
+export const GOVERNOR_ADDRESS = '0x1670f0f1fc1e2d935f76480e0f8220af6a1f8caf'

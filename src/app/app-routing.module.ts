@@ -6,6 +6,7 @@ import { CrossChainTxComponent } from './cross-chain-tx/cross-chain-tx.component
 import { PayComponent } from './pay/pay.component';
 import { LendComponent } from './lend/lend.component';
 import { WrapComponent } from './wrap/wrap.component';
+import { GatewayComponent } from './gateway/gateway.component';
 
 const routes: Routes = [
   { path: '', component: DeployComponent },
@@ -14,7 +15,8 @@ const routes: Routes = [
   { path: 'cctx', component: CrossChainTxComponent },
   { path: 'pay', component: PayComponent },
   { path: 'lend', component: LendComponent },
-  { path: 'wrap', component: WrapComponent }
+  { path: 'wrap', component: WrapComponent },
+  { path: 'gateway', component: GatewayComponent }
 ];
 
 @NgModule({

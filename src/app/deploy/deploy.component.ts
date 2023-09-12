@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, from, switchMap } from 'rxjs';
 import { DeployData, PolycodeService } from '../shared/polycode.service';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { DeployService } from './deploy.service';
 
 @Component({
   selector: 'app-deploy',
@@ -30,7 +31,7 @@ export class DeployComponent {
   deploymentLoadingSub = new BehaviorSubject(false)
   deployementLoading$ = this.deploymentLoadingSub.asObservable()
 
-  constructor(private polycode: PolycodeService) { }
+  constructor(private deployService: DeployService) { }
 
   showTestnetsSub = new BehaviorSubject(true)
   showTestnets$ = this.showTestnetsSub.asObservable()
@@ -94,17 +95,23 @@ export class DeployComponent {
       )
     }
 
-    this.polycode.multichainDeploy(
+    this.deployService.deployToken(
       controls.tokenName.value!,
       controls.tokenSymbol.value!,
       salt,
       supplies
-    ).subscribe(res => {
-      this.deploymentLoadingSub.next(false)
-      this.deployedTokenTxHashSub.next(res.transactionHash ?? null)
-      this.polycode.precomputeAddress(controls.tokenName.value!, controls.tokenSymbol.value!, salt).then(result => {
-        this.deployedTokenAddressSub.next(result.return_values[0])
+    ).then(tokenDeployTx => {
+      this.deployService.precalculateTokenAddress(
+        controls.tokenName.value!,
+        controls.tokenSymbol.value!,
+        salt.toString()
+      ).then(tokenAddress => {
+        this.deployedTokenAddressSub.next(tokenAddress)
+        this.deployedTokenTxHashSub.next(tokenDeployTx.hash)
       })
+    }).catch(err => {
+      this.deploymentLoadingSub.next(false)
+      alert(err)
     })
   }
 

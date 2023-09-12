@@ -1,5 +1,11 @@
-<div class="w-screen flex flex-col items-center justify-center py-4 dark:border-slate-700 absolute top-0 left-0 ">
-    <div class=" bg-white flex border-b border-slate-200 pb-3 flex-row items-center justify-center w-full">
+<div *ngIf="!routerA.url.includes('gateway')" class="w-screen flex flex-col items-center justify-center pb-4  absolute top-0 left-0 ">
+    <div class="w-full bg-red-600 py-1 text-white text-center text-xs font-medium flex flex-row justify-center gap-x-2">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+          </svg>          
+        This is a development build of the Klaster app. Use only with test wallets.
+    </div>
+    <div class=" bg-white py-2 flex border-b border-slate-200 pb-2 flex-row items-center justify-center w-full">
         <div class="flex flex-row justify-between items-center max-w-5xl w-full">
             <div class="flex flex-col items-end">
                 <img class="h-7" src="../../assets/klstr.png" alt="" srcset="">
@@ -43,7 +49,12 @@
                     </div>
 
                 </span>
-                <div (click)="logOut()" *ngIf="address$ | async as address" class="rounded-md bg-slate-50 border border-slate-100 flex dark:bg-slate-600 dark:border-slate-700 items-center flex-row gap-x-2 px-6 font-medium
+                <div class="text-xs uppercase font-semibold bg-amber-50 text-red-600 py-4 px-6
+                 rounded-md border border-amber-100 flex flex-row gap-x-2 items-center" *ngIf="isUnsupportedNetwork$ | async">
+
+                    ❌ Connected to Unsupported network
+                </div>
+                <div (click)="logOut()" *ngIf="address$ | async as address" class="rounded-md bg-slate-50 border border-slate-100 flex  items-center flex-row gap-x-2 px-6 font-medium
                 hover:bg-rose-600 cursor-pointer hover:text-white transition-all
                 normal-case text-xs py-[14px] text-slate-700">
                     <div>
@@ -63,11 +74,27 @@
         </div>
 
     </div>
+
     <div *ngIf="address$ | async as address"
         class="w-full py-4 bg-white border-b border-slate-200 flex flex-row justify-center">
         <div class="max-w-5xl w-full">
+            <div class="w-full grid grid-cols-7 text-gradient pb-4 uppercase text-xs font-semibold">
+                <div class="col-span-4 flex flex-row gap-x-2 items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 text-rose-700">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+                      </svg>                      
+                    Multichain dApps
+                </div>
+                <div class="col-span-3 flex text-gradient flex-row gap-x-2 items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 text-rose-700">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" />
+                      </svg>
+                                          
+                    Multichain Token Tools
+                </div>
+            </div>
             <div
-                class="flex flex-row justify-between text-slate-700 dark:!text-slate-100 text-sm uppercase font-semibold">
+                class="flex flex-row justify-between text-slate-700  text-sm uppercase font-semibold">
                 <div routerLink="pay" routerLinkActive="text-rose-700"
                     class="cursor-pointer items-center flex flex-row gap-x-2">
 
@@ -88,23 +115,23 @@
                 <div>
                     <div class="h-full w-[1px] bg-slate-200"></div>
                 </div>
+                <div routerLink="bridge" routerLinkActive="text-rose-700"
+                class="cursor-pointer items-center flex flex-row gap-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                  </svg>
+                  
+                Bridge
+            </div>
                 <div routerLink="wrap" routerLinkActive="text-rose-700"
                     class="cursor-pointer items-center flex flex-row gap-x-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 3.75H6.912a2.25 2.25 0 00-2.15 1.588L2.35 13.177a2.25 2.25 0 00-.1.661V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 00-2.15-1.588H15M2.25 13.5h3.86a2.25 2.25 0 012.012 1.244l.256.512a2.25 2.25 0 002.013 1.244h3.218a2.25 2.25 0 002.013-1.244l.256-.512a2.25 2.25 0 012.013-1.244h3.859M12 3v8.25m0 0l-3-3m3 3l3-3" />
                       </svg>
                       
                     Wrap
                 </div>
-                <div routerLink="bridge" routerLinkActive="text-rose-700"
-                    class="cursor-pointer items-center flex flex-row gap-x-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                        stroke="currentColor" class="w-5 h-5">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3" />
-                    </svg>
-                    Bridge
-                </div>
+
                 <div routerLink="deploy" routerLinkActive="text-rose-700"
                     class="cursor-pointer flex flex-row items-center gap-x-2">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
