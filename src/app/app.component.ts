@@ -8,7 +8,7 @@ import { BlockchainService } from './shared/blockchain.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'multichain-token';
 
   address$ = this.blockchainService.account$
@@ -18,8 +18,20 @@ export class AppComponent {
     })
   )
 
-  constructor(private blockchainService: BlockchainService) {}
+  hasProviderSub = new BehaviorSubject(false)
+  hasProvider$ = this.hasProviderSub.asObservable()
 
+  constructor(private blockchainService: BlockchainService) {
+
+  }
+
+  ngOnInit(): void {
+    if((window as any).ethereum === undefined) {
+      this.hasProviderSub.next(false)
+    } else {
+      this.hasProviderSub.next(true)
+    }
+  }
 
   authWallets() {
     this.blockchainService.auth()

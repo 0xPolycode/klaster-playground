@@ -17,7 +17,7 @@ export class BridgeService {
     const governor = new ethers.Contract(
       GOVERNOR_ADDRESS,
       KlasterGovernorABI,
-      this.blockchainService.provider.getSigner()
+      this.blockchainService.provider?.getSigner()
     )
 
     return await governor['getTokens'](
@@ -29,7 +29,7 @@ export class BridgeService {
     const token = new ethers.Contract(
       address,
       KlasterERC20,
-      this.blockchainService.provider.getSigner()
+      this.blockchainService.provider?.getSigner()
     )
     return await token['balanceOf'](
       this.blockchainService.getAccount()
@@ -38,7 +38,7 @@ export class BridgeService {
 
   async bridgeToken(tokenAddress: string, destinationChain: number, bridgeAmount: number, bridgeReceiver: string) {
 
-    const token = new ethers.Contract(tokenAddress, KlasterERC20, this.blockchainService.provider.getSigner())
+    const token = new ethers.Contract(tokenAddress, KlasterERC20, this.blockchainService.provider?.getSigner())
 
     return await token['rtc'](
       destinationChain,

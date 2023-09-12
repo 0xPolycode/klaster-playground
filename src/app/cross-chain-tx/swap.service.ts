@@ -16,7 +16,7 @@ export class SwapService {
 
     const tokenContract = new ethers.Contract(sourceContractAddress, 
         KlasterERC20ABI, 
-        this.blockchainService.provider.getSigner() 
+        this.blockchainService.provider?.getSigner() 
     )
 
     const swapFunctionInterface = [
@@ -114,6 +114,6 @@ export class SwapService {
   private getTokenContract(address: string) {
     return new ethers.Contract(address,
       KlasterERC20ABI,
-      this.blockchainService.provider.getSigner())
+      this.blockchainService.provider?.getSigner())
   }
 }

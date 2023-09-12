@@ -52,7 +52,7 @@ export class GatewayComponent implements OnInit {
 
   dispatchEvent(chain: Network) {
 
-    (this.blockchainService.provider.provider as any).emit('network', [this.selectedChainSub.value.chainId, chain.chainId])    
+    (this.blockchainService.provider?.provider as any).emit('network', [this.selectedChainSub.value.chainId, chain.chainId])    
   }
 
   toggleChainSelector() {

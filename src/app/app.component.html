@@ -8,7 +8,7 @@
   <div class="font-semibold uppercase">Mobile screens not supported. <br> Please use the app on a desktop-size screen</div>
 </div>
 
-<div class="w-screen flex flex-col justify-between 
+<div *ngIf="hasProvider$ | async" class="w-screen flex flex-col justify-between 
  min-h-screen bg-gradient-to-b from-white to-pink-50">
   <div class="absolute">
     <app-navbar></app-navbar>

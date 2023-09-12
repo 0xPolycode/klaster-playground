@@ -40,7 +40,7 @@ export class DeployService {
   }
 
   private getGovernor() {
-    return new ethers.Contract(this.GOVERNOR_ADDRESS, KlasterGovernorABI, this.blockchainService.provider.getSigner())
+    return new ethers.Contract(this.GOVERNOR_ADDRESS, KlasterGovernorABI, this.blockchainService.provider?.getSigner())
   }
 
   async precalculateTokenAddress(name: string, symbol: string, salt: string) {

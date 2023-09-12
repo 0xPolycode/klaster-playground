@@ -11,13 +11,21 @@ export class BlockchainService {
 
   private WALLET_KEY = 'klaster.storage.wallet-key'
 
-  provider = new ethers.providers.Web3Provider((window as any).ethereum, "any")
+  provider? = this.getProvider()
 
   private readProviders = networks.map(network => {
     return { 
       chainId: network.chainId, 
       provider: new ethers.providers.JsonRpcProvider(network.rpcUrls[0]) }
   })
+
+  private getProvider() {
+    if((window as any).ethereum) {
+      return new ethers.providers.Web3Provider((window as any).ethereum, "any")
+    } else { 
+      return undefined
+    }
+  }
 
   getReadProvider(chainId: number) {
     return this.readProviders.filter(provider => provider.chainId === chainId).at(0)
@@ -43,16 +51,16 @@ export class BlockchainService {
     if(wallet) {
       this.accountSub.next(wallet)
     }
-    this.provider.getNetwork().then(network => this.networkSub.next(getNetworkFromChainID(network.chainId)))
+    this.provider?.getNetwork().then(network => this.networkSub.next(getNetworkFromChainID(network.chainId)))
 
     this.handleNetworkReload()
     this.handleAccountReload()
 
 
-    this.provider.on('block', () => {
+    this.provider?.on('block', () => {
         const account = this.getAccount()
         if(account) {
-          this.provider.getBalance(account).then(balance => {
+          this.provider?.getBalance(account).then(balance => {
             this.balanceSub.next(balance)
           })
         }
@@ -60,33 +68,33 @@ export class BlockchainService {
   }
 
   handleAccountReload() {
-    const provider = new ethers.providers.Web3Provider((window as any).ethereum, "any");
-    (provider.provider as any).on('accountsChanged', (accounts: any) => {
+    const provider = this.getProvider();
+    (provider?.provider as any).on('accountsChanged', (accounts: any) => {
       this.accountSub.next(accounts[0])
       window.location.reload()
-      this.provider.getBalance(this.getAccount()!).then(balance => { this.balanceSub.next(balance) })
+      this.provider?.getBalance(this.getAccount()!).then(balance => { this.balanceSub.next(balance) })
     })
   }
 
   handleNetworkReload(){
-    const provider = new ethers.providers.Web3Provider((window as any).ethereum, "any");
-    provider.on("network", (newNetwork, oldNetwork) => {
+    const provider = this.getProvider();
+    provider?.on("network", (newNetwork, oldNetwork) => {
         if (oldNetwork) {
             window.location.reload();
         }
-        this.provider.getBalance(this.getAccount()!).then(balance => { this.balanceSub.next(balance) })
+        this.provider?.getBalance(this.getAccount()!).then(balance => { this.balanceSub.next(balance) })
     });
     
   }
 
   auth() {
-    this.provider.send('eth_requestAccounts', [])
+    this.provider?.send('eth_requestAccounts', [])
       .then(res => { 
         this.accountSub.next(res[0]) 
-        this.provider.getBalance(this.getAccount()!).then(balance => { this.balanceSub.next(balance) })
+        this.provider?.getBalance(this.getAccount()!).then(balance => { this.balanceSub.next(balance) })
       })
       
-    this.provider.getNetwork()
+    this.provider?.getNetwork()
       .then(network => { this.networkSub.next(getNetworkFromChainID(network.chainId)) })
   }
 
@@ -106,7 +114,7 @@ export class BlockchainService {
           blockExplorerUrls: newChain.blockExploreUrls
       }
 
-    this.provider.send('wallet_addEthereumChain', [
+    this.provider?.send('wallet_addEthereumChain', [
       newChainFormatted
     ]).then(_ => {
       location.reload()
