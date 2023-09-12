@@ -81,7 +81,10 @@ export class BlockchainService {
 
   auth() {
     this.provider.send('eth_requestAccounts', [])
-      .then(res => { this.accountSub.next(res[0]) })
+      .then(res => { 
+        this.accountSub.next(res[0]) 
+        this.provider.getBalance(this.getAccount()!).then(balance => { this.balanceSub.next(balance) })
+      })
       
     this.provider.getNetwork()
       .then(network => { this.networkSub.next(getNetworkFromChainID(network.chainId)) })
