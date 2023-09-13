@@ -6,26 +6,27 @@
 
     <ng-template #uni>
         <div class="max-w-xl w-full bg-white p-8 rounded-md border border-slate-200">
-
-
-        
             <div class=" border-slate-100">
-                <div class="text-sm text-slate-700 font-semibold uppercase flex flex-row justify-center items-center gap-4">
+                <div
+                    class="text-sm text-slate-700 font-semibold uppercase flex flex-row justify-center items-center gap-4">
                     <img class="h-8" src="../../assets/uniswap.png" alt="" srcset="">
-                    <div class="text-lg text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-700 to-rose-700">Swap</div>
+                    <div class="text-lg text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-700 to-rose-700">
+                        Swap</div>
                 </div>
-                <!-- <div class="mt-4 uppercase font-bold text-indigo-700 text-sm">Steps</div> -->
-    
-                <div *ngIf="network$ | async as network" class="w-full mt-10 grid grid-cols-9 gap-x-4 rounded-md border-slate-100">
-                    <div class="col-span-9 text-rose-700 uppercase mb-2 flex flex-row gap-x-2 items-center font-semibold text-xs">
+
+                <div *ngIf="network$ | async as network"
+                    class="w-full mt-10 grid grid-cols-9 gap-x-4 rounded-md border-slate-100">
+                    <div
+                        class="col-span-9 text-rose-700 uppercase mb-2 flex flex-row gap-x-2 items-center font-semibold text-xs">
                         Signing transaction on
                     </div>
-                    <div class="w-full py-3 bg-slate-50 flex flex-row items-center text-xs uppercase gap-x-3 font-semibold text-slate-700 col-span-9 border-slate-100 rounded-md px-6 border">
+                    <div
+                        class="w-full py-3 bg-slate-50 flex flex-row items-center text-xs uppercase gap-x-3 font-semibold text-slate-700 col-span-9 border-slate-100 rounded-md px-6 border">
                         <img class="h-6" src="../../assets/{{network.logoUri}}" alt="" srcset="">
                         {{network.name}}
                     </div>
                 </div>
-    
+
                 <div class="w-full mt-4 grid grid-cols-9 gap-x-4 rounded-md border-slate-100">
                     <div class="col-span-9 bg-gradient text-rose-700 uppercase mb-1 font-semibold text-xs">
                         Using liquidity on
@@ -38,84 +39,76 @@
                                 <img class="h-6" src="../../assets/{{chain.logoUri}}" alt="" srcset="">
                                 {{chain.name}}
                             </div>
-                            
+
                             <div>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                  </svg>
-                                  
-    
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                </svg>
                             </div>
                         </div>
                     </div>
-    
                 </div>
-    
-    
-    
-                <div *ngIf="tokenBalance$ | async as balance" class="w-full mt-4 grid grid-cols-7 gap-x-4 rounded-md border-slate-100">
+
+
+
+                <div *ngIf="tokenBalance$ | async as balance"
+                    class="w-full mt-4 grid grid-cols-7 gap-x-4 rounded-md border-slate-100">
                     <div class="col-span-6 text-rose-700 uppercase mb-2 font-semibold text-xs">
                         You Send
                     </div>
-    
-                    <input *ngIf="balanceMessage$ | async as message" 
-                        [formControl]="amountSend" 
-                        class="border col-span-4 h-full
+
+                    <input *ngIf="balanceMessage$ | async as message" [formControl]="amountSend" class="border col-span-4 h-full
                             py-3 w-full px-6 text-sm
                             rounded-md border-slate-100
-                            font-mono outline-none" 
-                        [placeholder]="message" 
-                        type="text" 
-                        name="" 
-                        id="">
-    
+                            font-mono outline-none" [placeholder]="message" type="text" name="" id="">
+
                     <div class="col-span-3">
                         <div class="border border-slate-100 rounded-md bg-slate-50 text-xs uppercase font-semibold 
                             items-center w-full py-2 flex flex-row justify-center gap-x-4">
-                            <div class="bg-gradient-to-r from-fuchsia-600 to-rose-500 w-8 h-8 flex flex-row items-center justify-center text-white rounded-full">
+                            <div
+                                class="bg-gradient-to-r from-fuchsia-600 to-rose-500 w-8 h-8 flex flex-row items-center justify-center text-white rounded-full">
                                 A
                             </div>
                             Token A
                         </div>
                     </div>
-    
-                
-    
                 </div>
 
                 <ng-container *ngIf="tokenBalance$ | async as balance">
 
                     <div *ngIf="balance.balance === 0" class="text-amber-600 text-xs mt-1 font-medium">
-                        You don't have any tokens for swapping. Click 
-                        <span (click)="mintTokenA()" class="underline cursor-pointer hover:text-red-700" href="">here</span> 
+                        You don't have any tokens for swapping. Click
+                        <span (click)="mintTokenA()" class="underline cursor-pointer hover:text-red-700"
+                            href="">here</span>
                         to mint test tokens.
                     </div>
                 </ng-container>
 
-                <div class="mt-2 bg-amber-50 text-xs py-2 px-4 rounded-md text-red-500 font-medium" 
+                <div class="mt-2 bg-amber-50 text-xs py-2 px-4 rounded-md text-red-500 font-medium"
                     *ngIf="sendWarning$ | async as warning">
                     {{warning}}
                 </div>
-    
-                
-    
+
                 <div class="w-full mt-4 grid grid-cols-7 gap-x-4 rounded-md border-slate-100">
                     <div class="col-span-6 text-rose-700 uppercase mb-2 font-semibold text-xs">
                         You Receive
                     </div>
-    
-                    <div class="border font-semibold col-span-4 h-full py-3 w-full bg-slate-50 px-6 text-sm rounded-md border-slate-100 font-mono outline-none" 
-                placeholder="Amount" type="text" name="" id="">
-                    <span *ngIf="receiveAmount$ | async as receive">
-                        {{receive}}
-                    </span>
-            </div>
 
-    
+                    <div class="border font-semibold col-span-4 h-full py-3 w-full bg-slate-50 px-6 text-sm rounded-md border-slate-100 font-mono outline-none"
+                        placeholder="Amount" type="text" name="" id="">
+                        <span *ngIf="receiveAmount$ | async as receive">
+                            {{receive}}
+                        </span>
+                    </div>
+
+
                     <div class="col-span-3">
                         <div class="border border-slate-100 rounded-md bg-slate-50 text-xs uppercase font-semibold 
                             items-center w-full py-2 flex flex-row justify-center gap-x-4">
-                            <div class="bg-gradient-to-r from-emerald-600 to-indigo-500 w-8 h-8 flex flex-row items-center justify-center text-white rounded-full">
+                            <div
+                                class="bg-gradient-to-r from-emerald-600 to-indigo-500 w-8 h-8 flex flex-row items-center justify-center text-white rounded-full">
                                 B
                             </div>
                             Token B
@@ -123,7 +116,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- <div class="mt-4 bg-gradient-to-r from-rose-50 to-fuchsia-50 opacity-80 py-3 px-5 rounded-md flex flex-row items-center justify-between">
                 <div class="text-xs font-medium opacity-75 text-rose-700">Cross-chain <br> transaction cost</div>
                 <div class="flex flex-col">
@@ -134,43 +127,46 @@
                     <div class="text-[10px] opacity-75 text-rose-700">0.11 AVAX</div>
                 </div>
             </div> -->
-        
 
-            <button *ngIf="(isButtonLoading$ | async) === false" (click)="performCrossChainSwap()" [disabled]="isButtonDisabled$ | async"
-             class="mt-4 bg-gradient-to-r from-fuchsia-700 w-full disabled:cursor-text to-rose-600 flex flex-row items-center transition-all
+
+            <button *ngIf="(isButtonLoading$ | async) === false" (click)="performCrossChainSwap()"
+                [disabled]="isButtonDisabled$ | async"
+                class="mt-4 bg-gradient-to-r from-fuchsia-700 w-full disabled:cursor-text to-rose-600 flex flex-row items-center transition-all
              text-white py-3 justify-center rounded-md text-xs uppercase gap-x-2 font-semibold cursor-pointer hover:from-fuchsia-800 hover:to-rose-800">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
-                  </svg>
-                  
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                </svg>
+
                 Execute Cross-Chain Swap
             </button>
 
-            <div *ngIf="(isButtonLoading$ | async)" 
+            <div *ngIf="(isButtonLoading$ | async)"
                 class="w-full text-center py-3 bg-slate-100 mt-2 animate-pulse text-xs uppercase font-semibold">
                 Signing TX...
             </div>
-    
-            <a target="_blank" href="https://chain.link/cross-chain" class="mt-4 text-center text-[10px] text-slate-400 flex flex-col items-center gap-y-2">
+
+            <a target="_blank" href="https://chain.link/cross-chain"
+                class="mt-4 text-center text-[10px] text-slate-400 flex flex-col items-center gap-y-2">
                 Built on Chainlink CCIP
                 <img class="h-4 w-4" src="../../assets/ccip.png" alt="" srcset="">
-    
+
             </a>
-    
+
         </div>
     </ng-template>
 
 
 </div>
 
-<div *ngIf="selectChainVisible$ | async" 
+<div *ngIf="selectChainVisible$ | async"
     class="fixed top-0 left-0 w-screen h-screen overflow-hidden backdrop-blur-[1px] flex flex-row justify-center items-center bg-[rgba(0,0,0,0.3)]">
     <div class="max-w-md w-full bg-white p-6 rounded-md">
         <div class="text-center w-full uppercase text-xs text-rose-700 font-semibold">
             Using liquidity on
         </div>
-        <div *ngFor="let chain of chains; let i = index" (click)="selectChain(i)"
-            class="flex flex-row gap-x-3 items-center cursor-pointer hover:bg-slate-50
+        <div *ngFor="let chain of chains; let i = index" (click)="selectChain(i)" class="flex flex-row gap-x-3 items-center cursor-pointer hover:bg-slate-50
              text-slate-700 pt-4 mt-4 pb-4 px-4 uppercase text-xs font-semibold">
             <img class="h-8" src="../../assets/{{chain.logoUri}}" alt="" srcset="">
             <div>{{chain.name}}</div>
@@ -180,14 +176,16 @@
 
 <div class="w-full flex flex-row justify-center text-slate-600" *ngIf="swapTxHash$ | async as hash">
     <div class="mt-24 p-8 bg-white max-w-xl w-full shadow-sm flex flex-col">
-        <div class="text-center uppercase font-bold text-lg text-transparent bg-clip-text bg-gradient-to-r from-rose-600 to-fuchsia-700">You have initiated a cross-chain swap.</div>
+        <div
+            class="text-center uppercase font-bold text-lg text-transparent bg-clip-text bg-gradient-to-r from-rose-600 to-fuchsia-700">
+            You have initiated a cross-chain swap.</div>
         <div class="mt-8 text-center text-slate-500">
             Depending on the network, it may take anywhere from 4 - 40 minutes for the swap to complete!
         </div>
-        <a target="_blank" href="https://ccip.chain.link/tx/{{hash}}" 
-        class="bg-gradient-to-r from-rose-600 to-fuchsia-700 text-white mt-8 text-center py-3 cursor-pointer
+        <a target="_blank" href="https://ccip.chain.link/tx/{{hash}}" class="bg-gradient-to-r from-rose-600 to-fuchsia-700 text-white mt-8 text-center py-3 cursor-pointer
             rounded-md font-semibold uppercase text-sm hover:from-rose-800 hover:to-fuchsia-800 w-full">
             Check Cross-Chain TX State
         </a>
+        <div class="text-sm text-slate-500 mt-2">Note: It may take a couple of minutes for the CCIP explorer to detect the cross-chain messages.</div>
     </div>
 </div>
