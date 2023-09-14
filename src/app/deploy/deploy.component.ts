@@ -101,14 +101,18 @@ export class DeployComponent {
       salt,
       supplies
     ).then(tokenDeployTx => {
-      this.deployService.precalculateTokenAddress(
-        controls.tokenName.value!,
-        controls.tokenSymbol.value!,
-        salt.toString()
-      ).then(tokenAddress => {
-        this.deployedTokenAddressSub.next(tokenAddress)
-        this.deployedTokenTxHashSub.next(tokenDeployTx.hash)
+
+      tokenDeployTx.wait().then((tx: any) => {
+        this.deployService.precalculateTokenAddress(
+          controls.tokenName.value!,
+          controls.tokenSymbol.value!,
+          salt.toString()
+        ).then(tokenAddress => {
+          this.deployedTokenAddressSub.next(tokenAddress)
+          this.deployedTokenTxHashSub.next(tokenDeployTx.hash)
+        })
       })
+      
     }).catch(err => {
       this.deploymentLoadingSub.next(false)
       alert(err)

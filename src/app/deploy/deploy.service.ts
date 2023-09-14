@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BlockchainService } from '../shared/blockchain.service';
 import { DeployData } from '../shared/polycode.service';
 const KlasterGovernorABI = require('../../assets/abis/KlasterGovernorABI.json')
-import { ContractFactory, ethers } from 'ethers';
+import { ContractFactory, ContractReceipt, ethers } from 'ethers';
 
 @Injectable({
   providedIn: 'root'

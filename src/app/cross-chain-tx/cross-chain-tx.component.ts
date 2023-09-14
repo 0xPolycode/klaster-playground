@@ -62,7 +62,7 @@ export class CrossChainTxComponent implements OnInit {
     })
   )
 
-  chains = networks.filter(network => network.chainId !== 43113)
+  chains = networks
 
   selectedChainSub = new BehaviorSubject<Network>(networks[1])
   selectedChain$ = this.selectedChainSub.asObservable()
