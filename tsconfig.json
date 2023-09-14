@@ -23,7 +23,16 @@
       "es2020",
       "dom"
     ],
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "paths":{
+      "crypto":["node_modules/crypto-js"],
+      "https":["node_modules/https-browserify"],
+      "http":["node_modules/stream-http"],
+      "url":["node_modules/url"],
+      "zlib":["node_modules/browserify-zlib"],
+      "assert":["node_modules/assert"],
+      "stream":["node_modules/stream-browserify"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
