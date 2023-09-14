@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ExploreService } from './explore.service';
-import { from } from 'rxjs';
+import { ExploreService, TokenBalanceInfo } from './explore.service';
+import { from, map } from 'rxjs';
 
 @Component({
   selector: 'app-explore',
@@ -9,7 +9,11 @@ import { from } from 'rxjs';
 })
 export class ExploreComponent implements OnInit {
 
-  tokens$ = from(this.exploreService.getTokens())
+  tokens$ = from(this.exploreService.getTokens()).pipe(
+    map(tokens => {
+      return tokens.filter((token: TokenBalanceInfo) => token.balance.gt(0))
+    })
+  )
 
   constructor(private exploreService: ExploreService) {}
 

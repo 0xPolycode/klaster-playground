@@ -23,12 +23,13 @@
             </div>
         </div> 
         <hr class="my-2 border-slate-100">
-        <div class="w-full grid grid-cols-5 bg-opacity-50 py-3 px-4 text-sm" *ngFor="let token of tokens; let i = index"
+        <div class="w-full grid grid-cols-5 bg-opacity-50 py-4 font-medium
+        text-slate-700 px-4 text-sm" *ngFor="let token of tokens; let i = index"
             [class.bg-rose-50]="i % 2 === 0">
             <div class="font-semibold text-rose-700">
                 {{token.name}}
             </div>
-            <div>
+            <div class="underline text-indigo-700 cursor-pointer" >
                 {{token.address | shorten:5:5}}
             </div>
             <div>
