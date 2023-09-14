@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, tap } from 'rxjs';
 import { PolycodeService } from './shared/polycode.service';
 import { BlockchainService } from './shared/blockchain.service';
-import { attach } from "@polyflow/sdk";
 
 @Component({
   selector: 'app-root',
@@ -32,10 +31,6 @@ export class AppComponent implements OnInit {
     } else {
       this.hasProviderSub.next(true)
     }
-
-    attach("JW6aA.meLY1F2m2-xoLSfIMNmc_RS_aV0BH_yPgWFSEY-", {
-      logEnabled: true
-    });
   }
 
   authWallets() {
