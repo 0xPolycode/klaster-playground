@@ -1,5 +1,6 @@
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { from, Observable } from 'rxjs';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -15,6 +16,8 @@ import { PayComponent } from './pay/pay.component';
 import { LendComponent } from './lend/lend.component';
 import { GatewayComponent } from './gateway/gateway.component';
 import { SafePipe } from './shared/pipes/safe.pipe';
+
+import { attach } from "@polyflow/sdk";
 
 @NgModule({
   declarations: [
@@ -36,7 +39,18 @@ import { SafePipe } from './shared/pipes/safe.pipe';
     AppRoutingModule,
     ReactiveFormsModule
   ],
-  providers: [],
+  providers: [{
+    provide: APP_INITIALIZER,
+    useFactory: initApp,
+    deps: [],
+    multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+
+function initApp(): () => Observable<string> {
+  return () => from(
+    attach("JW6aA.meLY1F2m2-xoLSfIMNmc_RS_aV0BH_yPgWFSEY-", { logEnabled: true })
+  );
+}
