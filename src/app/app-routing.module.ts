@@ -7,6 +7,7 @@ import { PayComponent } from './pay/pay.component';
 import { LendComponent } from './lend/lend.component';
 import { WrapComponent } from './wrap/wrap.component';
 import { GatewayComponent } from './gateway/gateway.component';
+import { ExploreComponent } from './explore/explore.component';
 
 const routes: Routes = [
   { path: '', component: DeployComponent },
@@ -16,7 +17,8 @@ const routes: Routes = [
   { path: 'pay', component: PayComponent },
   { path: 'lend', component: LendComponent },
   { path: 'wrap', component: WrapComponent },
-  { path: 'gateway', component: GatewayComponent }
+  { path: 'gateway', component: GatewayComponent },
+  { path: 'explore', component: ExploreComponent }
 ];
 
 @NgModule({

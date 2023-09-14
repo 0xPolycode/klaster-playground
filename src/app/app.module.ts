@@ -18,6 +18,7 @@ import { GatewayComponent } from './gateway/gateway.component';
 import { SafePipe } from './shared/pipes/safe.pipe';
 
 import { attach } from "@polyflow/sdk";
+import { ExploreComponent } from './explore/explore.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { attach } from "@polyflow/sdk";
     PayComponent,
     LendComponent,
     GatewayComponent,
-    SafePipe
+    SafePipe,
+    ExploreComponent
   ],
   imports: [
     BrowserModule,
@@ -51,6 +53,6 @@ export class AppModule { }
 
 function initApp(): () => Observable<string> {
   return () => from(
-    attach("JW6aA.meLY1F2m2-xoLSfIMNmc_RS_aV0BH_yPgWFSEY-", { logEnabled: true })
+    attach("JW6aA.meLY1F2m2-xoLSfIMNmc_RS_aV0BH_yPgWFSEY-")
   );
 }
