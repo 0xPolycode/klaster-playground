@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, tap } from 'rxjs';
+import { BehaviorSubject, map, tap } from 'rxjs';
 import { PolycodeService } from './shared/polycode.service';
 import { BlockchainService } from './shared/blockchain.service';
+import { networks } from './shared/networks';
 
 @Component({
   selector: 'app-root',

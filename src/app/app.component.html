@@ -14,7 +14,7 @@
     <app-navbar></app-navbar>
   </div>
   <div *ngIf="address$ | async; else authWallet" class="pt-24">
-    <ng-container *ngIf="(balance$ | async)?.eq(0) === false">
+    <ng-container *ngIf="((balance$ | async)?.eq(0) === false)">
       <router-outlet></router-outlet>
     </ng-container>
     <div class="mt-24 p-8 rounded-md w-full flex flex-row justify-center
@@ -24,8 +24,11 @@
         <br><br>
         Currently, the app is working on: Ethereum Sepolia, Avalance Fuji & Optimism Goerli Testnets
 
+        <br> <br>
+        Use <a target="_blank" class="underline text-blue-700 font-semibold" href="https://faucet.quicknode.com">this</a> faucet, sponsored by QuickNode, to get testnet gas.
       </div>
     </div>
+
   </div>
 
 </div>

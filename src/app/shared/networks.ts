@@ -63,5 +63,21 @@ export const networks: Network[] = [
 ]
 
 export function getNetworkFromChainID(chainId: number): Network | undefined {
-    return networks.filter(network => network.chainId === chainId).at(0)
+    const network =  networks.filter(network => network.chainId === chainId).at(0)
+    if(network) {
+        return network
+    } else {
+        return {
+            chainId: -1,
+            name: 'Unsupported network',
+            logoUri: 'no.png',
+            rpcUrls: [],
+            nativeCurrency: {
+                name: 'NO',
+                symbol: 'NO',
+                decimals: 0
+            },
+            blockExploreUrls: []
+        }
+    }
 }

@@ -83,9 +83,12 @@ export class SwapService {
   }
 
   getUniswapContractDeployment(chainId: number) {
-    return chainId === 420 ? 
-    "0x8d2915D89912Ba7bfBe2a5EA20BE6A1BBea7DB94" :
-    "0xC532a74256D3Db42D0Bf7a0400fEFDbad7694008"
+    switch(chainId) {
+      case 420: return "0x8d2915D89912Ba7bfBe2a5EA20BE6A1BBea7DB94";
+      case 11155111: return "0xC532a74256D3Db42D0Bf7a0400fEFDbad7694008";
+      case 43113: return "0xA302626D295e92387F69cAFdBAF5365fC41E8D79";
+    }
+    return ""
   }
 
   async getTokenBalance(address: string) {

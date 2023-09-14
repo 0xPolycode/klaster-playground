@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PolycodeService } from '../shared/polycode.service';
 import { BlockchainService } from '../shared/blockchain.service';
-import { BehaviorSubject, filter, map, take } from 'rxjs';
+import { BehaviorSubject, filter, map, take, tap } from 'rxjs';
 import { networks } from '../shared/networks';
 import { ActivatedRoute, Router } from '@angular/router';
 

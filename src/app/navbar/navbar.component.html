@@ -37,7 +37,11 @@
 
                     </div>
 
-                    <div *ngIf="networkSelectorOpen$ | async" class="absolute w-72 top-14 rounded-md p-2 bg-white border z-50 left-0">
+                    <div *ngIf="(networkSelectorOpen$ | async) || (isUnsupportedNetwork$ | async)" class="absolute w-72 top-14 rounded-md p-2 bg-white border z-50 left-0">
+                        <div class="px-4 pt-3 text-xs normal-case text-red-600" *ngIf="isUnsupportedNetwork$ | async">
+                            You're connected to an unsupported network. Please select one of the supported networks from the list below.
+                            <hr class="mt-2">
+                        </div>
                         <div class="text-xs flex flex-col" (click)="changeNetwork(network.chainId)"
                             *ngFor="let network of supportedNetworks; let i = index">
                             <div class="flex py-4 cursor-pointer px-4 hover:bg-slate-100  flex-row gap-x-2 items-center">
@@ -49,11 +53,7 @@
                     </div>
 
                 </span>
-                <div class="text-xs uppercase font-semibold bg-amber-50 text-red-600 py-4 px-6
-                 rounded-md border border-amber-100 flex flex-row gap-x-2 items-center" *ngIf="isUnsupportedNetwork$ | async">
 
-                    ❌ Connected to Unsupported network
-                </div>
                 <div (click)="logOut()" *ngIf="address$ | async as address" class="rounded-md bg-slate-50 border border-slate-100 flex  items-center flex-row gap-x-2 px-6 font-medium
                 hover:bg-rose-600 cursor-pointer hover:text-white transition-all
                 normal-case text-xs py-[14px] text-slate-700">
