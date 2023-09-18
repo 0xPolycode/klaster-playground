@@ -68,8 +68,9 @@
             </div>
         </div>
     </div>
-    <iframe *ngIf="iframeSrc$ | async as iframeSrc; else apps" [src]="iframeSrc | safe"
-        class="w-full fixed iframe-h top-[4.5rem]"></iframe>
+    <object data="https://app.uniswap.org"
+        class="w-full bg-red-50 fixed iframe-h top-[4.5rem]"></object>
+
 </div>
 
 <ng-template #apps>

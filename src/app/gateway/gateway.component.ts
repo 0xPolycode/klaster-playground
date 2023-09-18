@@ -11,7 +11,7 @@ import { Network, networks } from '../shared/networks';
 })
 export class GatewayComponent implements OnInit {
 
-  iframeSrcSub = new BehaviorSubject("")
+  iframeSrcSub = new BehaviorSubject("uni")
   iframeSrc$ = this.iframeSrcSub.asObservable()
 
   urlBarForm = new FormControl("", [Validators.required])

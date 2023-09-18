@@ -3,6 +3,7 @@ import { BigNumber, ethers } from 'ethers';
 import { BehaviorSubject, tap } from 'rxjs';
 import { Network, getNetworkFromChainID, networks } from './networks';
 import { hexlify } from 'ethers/lib/utils';
+import { SafeAppProvider } from '@safe-global/safe-apps-provider';
 
 @Injectable({
   providedIn: 'root'

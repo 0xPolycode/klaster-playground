@@ -40,18 +40,7 @@ export class CrossChainTxComponent implements OnInit {
   txHashSub = new BehaviorSubject<string | null>(null)
   txHash$ = this.txHashSub.asObservable()
 
-  receiveAmount$ = this.amountSend.valueChanges.pipe(
-    debounceTime(300),
-    switchMap(value => {
-      if(!value) {
-        return of(null)
-      }
-      return from(this.swapService.calculateReceiveUniswap(
-        this.selectedChainSub.value.chainId,
-        parseInt(value),
-      ))
-    })
-  )
+
 
   isButtonLoadingSub = new BehaviorSubject(false)
   isButtonLoading$ = this.isButtonLoadingSub.asObservable()
@@ -66,6 +55,32 @@ export class CrossChainTxComponent implements OnInit {
 
   selectedChainSub = new BehaviorSubject<Network>(networks[1])
   selectedChain$ = this.selectedChainSub.asObservable()
+
+  receiveAmount$ = combineLatest([this.selectedChain$, this.amountSend.valueChanges]).pipe(
+    debounceTime(300),
+    switchMap(([chain, value]) => {
+      if(!value) {
+        return of(null)
+      }
+      return from(this.swapService.calculateReceiveUniswap(
+        chain.chainId,
+        parseInt(value)
+      ))
+    })
+  )
+  
+  // this.amountSend.valueChanges.pipe(
+  //   debounceTime(300),
+  //   switchMap(value => {
+  //     if(!value) {
+  //       return of(null)
+  //     }
+  //     return from(this.swapService.calculateReceiveUniswap(
+  //       this.selectedChainSub.value.chainId,
+  //       parseInt(value),
+  //     ))
+  //   })
+  // )
 
   selectChainVisibleSub = new BehaviorSubject(false)
   selectChainVisible$ = this.selectChainVisibleSub.asObservable()

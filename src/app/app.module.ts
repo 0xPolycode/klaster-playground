@@ -34,7 +34,7 @@ import { ExploreComponent } from './explore/explore.component';
     LendComponent,
     GatewayComponent,
     SafePipe,
-    ExploreComponent
+    ExploreComponent,
   ],
   imports: [
     BrowserModule,
