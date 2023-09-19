@@ -36,7 +36,7 @@ export class GatewayWalletProviderService {
         metadata: {
           name: 'Klaster Gateway',
           description: 'Klaster Multichain Wallet',
-          url: 'https://localhost:4200',
+          url: 'https://app.klaster.io',
           icons: []
         }
       }
