@@ -20,9 +20,7 @@ export class GatewayWalletProviderService {
   })
 
   private web3WalletSub = new BehaviorSubject<Web3WalletType | null>(null)
-  web3Wallet$ = this.web3WalletSub.asObservable().pipe(
-    tap(_ => this.handleTxRequests())
-  )
+  web3Wallet$ = this.web3WalletSub.asObservable()
 
   private currentSessionSub = new BehaviorSubject<SessionTypes.Struct | undefined>(undefined)
   currentSession$ = this.currentSessionSub.asObservable()
@@ -36,7 +34,7 @@ export class GatewayWalletProviderService {
         metadata: {
           name: 'Klaster Gateway',
           description: 'Klaster Multichain Wallet',
-          url: 'https://app.klaster.io',
+          url: 'http://localhost:4200',
           icons: []
         }
       }
@@ -49,7 +47,10 @@ export class GatewayWalletProviderService {
 
   handleTxRequests() {
 
-    this.sessionRequest = this.web3WalletSub.value!.on('session_request', async event => {
+    alert("here")
+    this.web3WalletSub.value!.on('session_request', async event => {
+
+      alert("here")
 
       const { topic, params, id } = event
       const { request } = params
@@ -88,6 +89,8 @@ export class GatewayWalletProviderService {
       })
       this.currentSessionSub.next(session)
     })
+
+    this.handleTxRequests()
 
     return await this.web3WalletSub.value?.pair({ uri: uri })
   }
