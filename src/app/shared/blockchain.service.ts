@@ -44,6 +44,10 @@ export class BlockchainService {
     return this.accountSub.getValue()
   }
 
+  getNetwork() { 
+    return this.networkSub.getValue()
+  }
+
   private networkSub = new BehaviorSubject<Network | undefined>(undefined)
   network$ = this.networkSub.asObservable()
 

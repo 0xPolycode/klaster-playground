@@ -1,8 +1,9 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin, from, map, of, switchMap, tap } from 'rxjs';
 import { BlockchainService } from '../shared/blockchain.service';
 import { Network, networks } from '../shared/networks';
+import { GatewayWalletProviderService } from './gateway-wallet-provider.service';
 
 @Component({
   selector: 'app-gateway',
@@ -11,7 +12,7 @@ import { Network, networks } from '../shared/networks';
 })
 export class GatewayComponent implements OnInit {
 
-  iframeSrcSub = new BehaviorSubject("uni")
+  iframeSrcSub = new BehaviorSubject<string | null>(null)
   iframeSrc$ = this.iframeSrcSub.asObservable()
 
   urlBarForm = new FormControl("", [Validators.required])
@@ -26,13 +27,46 @@ export class GatewayComponent implements OnInit {
   chainSelectorVisibleSub = new BehaviorSubject(false)
   chainSelectorVisible$ = this.chainSelectorVisibleSub.asObservable()
 
-  proxy: any
+  injectWeb3ProviderVisibleSub = new BehaviorSubject(false)
+  injectWeb3ProviderVisible$ = this.injectWeb3ProviderVisibleSub.asObservable()
 
-  constructor(private blockchainService: BlockchainService) { }
+  walletConnectURIForm = new FormControl('', [])
+
+  currentSession$ = this.gatewayProviderService.currentSession$
+
+  addressSelectorVisibleSub = new BehaviorSubject(false)
+  addressSelectorVisible$ = this.addressSelectorVisibleSub.asObservable()
+
+  connectedNetwork$ = this.blockchainService.network$
+
+  contractWalletAddresses$ =  of([1,2,3,4,5,6]).pipe(
+    switchMap(nums => {
+      return combineLatest(
+        nums.map(num => { return from(this.gatewayProviderService.calculateWalletAddress(num.toString())) }) 
+      )
+    }),
+    tap(addresses => {
+      this.selectedWalletAddressSub.next(addresses[0])
+    })
+  )
+
+  selectedWalletAddressSub = new BehaviorSubject('')
+  selectedWalletAddress$ = this.selectedWalletAddressSub.asObservable()
+
+
+  constructor(private blockchainService: BlockchainService,
+    private gatewayProviderService: GatewayWalletProviderService) { }
 
   ngOnInit(): void {
-    this.initProviderProxyIntercept()
-    console.log((window as any).ethereum)
+    this.walletConnectURIForm.valueChanges.subscribe(value => {
+      if(value?.startsWith('wc')) {
+        this.pairWalletConnect()
+      }
+    })
+
+    this.gatewayProviderService.transactionRequested = (params) => {
+      alert(params)
+    }
   }
 
   setIframeSrc(url?: string) {
@@ -44,53 +78,49 @@ export class GatewayComponent implements OnInit {
     }
   }
 
+  toggleAddressSelectorVisible() {
+    this.addressSelectorVisibleSub.next(!this.addressSelectorVisibleSub.value)
+  }
+
   setChain(chain: Network) {
     this.dispatchEvent(chain)
     this.selectedChainSub.next(chain)
+    this.gatewayProviderService.switchChain(chain.chainId).then(_ => {
+    })
     this.toggleChainSelector()
   }
 
-  dispatchEvent(chain: Network) {
+  setSelectedWalletAddress(address: string) {
+    this.selectedWalletAddressSub.next(address)
+    this.gatewayProviderService.switchAccount(address)
+    this.toggleAddressSelectorVisible()
+  }
 
-    (this.blockchainService.provider?.provider as any).emit('network', [this.selectedChainSub.value.chainId, chain.chainId])    
+  dispatchEvent(chain: Network) {
+    (this.blockchainService.provider?.provider as any)
+      .emit('network', 
+        [this.selectedChainSub.value.chainId, chain.chainId])    
   }
 
   toggleChainSelector() {
     this.chainSelectorVisibleSub.next(!this.chainSelectorVisibleSub.value)
   }
 
+  toggleInjectURI() {
+    this.injectWeb3ProviderVisibleSub.next(!this.injectWeb3ProviderVisibleSub.value)
+  }
+
   logOut() {
     this.blockchainService.logOut()
   }
 
-  handler = {
-    get(target: any, prop: any, receiver: any) {
-      if(['request'].includes(prop)) {
-        return Reflect.get(target, prop, receiver)
-      }
-      return async (...args: any) => {
-        const arg0IsMethodString = typeof args[0] === 'string';
-        const method = arg0IsMethodString ? args[0] : args[0].method;
-        const params = arg0IsMethodString ? args[1] : args[0].params;
-
-        const result = await Reflect.get(target, prop, receiver)(...args);
-
-        if(method === 'eth_requestAccounts') {
-          console.log("CAUGHT_ACCOUNTS")
-        }
-
-        return result
-      }
-    }
+  async pairWalletConnect() {
+    this.gatewayProviderService.pair(this.walletConnectURIForm.value!, this.selectedWalletAddressSub.value).then(res => {
+      this.toggleInjectURI()
+    })
   }
 
-  initProviderProxyIntercept() {
-    var that = this
-    Object.defineProperty(window, 'ethereum', {
-      get() {
-        this.proxy = new Proxy(that.blockchainService.provider, that.handler)
-      },
-    })
+  async switchChain(chainID: number) {
   }
 
 }

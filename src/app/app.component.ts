@@ -14,9 +14,7 @@ export class AppComponent implements OnInit {
 
   address$ = this.blockchainService.account$
   balance$ = this.blockchainService.balance$.pipe(
-    tap(balance => {
-      console.log(balance)
-    })
+
   )
 
   hasProviderSub = new BehaviorSubject(false)

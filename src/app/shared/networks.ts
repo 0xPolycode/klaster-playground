@@ -38,7 +38,7 @@ export const networks: Network[] = [
     },
     { 
         chainId: 420, 
-        name: 'Optimism Goerli', 
+        name: 'Optimism Görli', 
         logoUri: 'op.png', 
         rpcUrls: ['https://goerli.optimism.io'],
         nativeCurrency: {
