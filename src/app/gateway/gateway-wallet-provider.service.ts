@@ -8,12 +8,15 @@ import { Web3Wallet as Web3WalletType } from '@walletconnect/web3wallet/dist/typ
 import { networks } from '../shared/networks';
 import { BlockchainService } from '../shared/blockchain.service';
 import { ethers } from 'ethers';
+import { TxRequestedInfo } from './gateway.component';
 const KlasterProxyFactoryABI = require('../../assets/abis/KlasterProxyFactoryABI.json')
 
 @Injectable({
   providedIn: 'root'
 })
 export class GatewayWalletProviderService {
+
+  private SESSION_STORE_KEY = 'io.klaster.session-storage-key'
 
   core = new Core({
     projectId: 'c61e63a1cd49a3378488703f2afe71e0'
@@ -23,7 +26,11 @@ export class GatewayWalletProviderService {
   web3Wallet$ = this.web3WalletSub.asObservable()
 
   private currentSessionSub = new BehaviorSubject<SessionTypes.Struct | undefined>(undefined)
-  currentSession$ = this.currentSessionSub.asObservable()
+  currentSession$ = this.currentSessionSub.asObservable().pipe(
+    tap(session => {
+      localStorage.setItem(this.SESSION_STORE_KEY, JSON.stringify(session))
+    })
+  )
 
   sessionRequest: any
 
@@ -41,16 +48,18 @@ export class GatewayWalletProviderService {
     ).then(wallet => {
       this.web3WalletSub.next(wallet)
     })
+    const storedSession = localStorage.getItem(this.SESSION_STORE_KEY)
+    if((storedSession != "undefined") && (storedSession != null)) {
+      const session = JSON.parse(storedSession) as SessionTypes.Struct
+      this.currentSessionSub.next(session)
+    }
   }
 
-  transactionRequested?: (params: any) => void
+  transactionRequested?: (params: TxRequestedInfo) => void
 
   handleTxRequests() {
 
-    alert("here")
     this.web3WalletSub.value!.on('session_request', async event => {
-
-      alert("here")
 
       const { topic, params, id } = event
       const { request } = params
@@ -58,10 +67,16 @@ export class GatewayWalletProviderService {
     
       console.log("PARAMS: ", event)
 
-      if(this.transactionRequested) { this.transactionRequested(event) }
+      if(this.transactionRequested) { 
+        this.transactionRequested(requestParamsMessage) 
+      }
     
     })
     
+  }
+
+  callKlasterProxy(chainId: number, salt: string, destAddress: string, value: number, data: string, gasLimit: string) {
+
   }
 
   async pair(uri: string, address: string) {

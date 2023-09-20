@@ -53,6 +53,8 @@ export class GatewayComponent implements OnInit {
   selectedWalletAddressSub = new BehaviorSubject('')
   selectedWalletAddress$ = this.selectedWalletAddressSub.asObservable()
 
+  txRequestedInfoSub = new BehaviorSubject<TxRequestedInfo | null>(null)
+  txRequestedInfo$ = this.txRequestedInfoSub.asObservable()
 
   constructor(private blockchainService: BlockchainService,
     private gatewayProviderService: GatewayWalletProviderService) { }
@@ -65,7 +67,7 @@ export class GatewayComponent implements OnInit {
     })
 
     this.gatewayProviderService.transactionRequested = (params) => {
-      alert(params)
+      this.txRequestedInfoSub.next(params)
     }
   }
 
@@ -123,4 +125,14 @@ export class GatewayComponent implements OnInit {
   async switchChain(chainID: number) {
   }
 
+}
+
+export interface TxRequestedInfo {
+  from: string,
+  to: string,
+  data: string,
+  value: string,
+  nonce: string,
+  gasPrice: string,
+  gas: string
 }
