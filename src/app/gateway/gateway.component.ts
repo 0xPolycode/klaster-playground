@@ -4,15 +4,38 @@ import { BehaviorSubject, combineLatest, forkJoin, from, map, of, switchMap, tap
 import { BlockchainService } from '../shared/blockchain.service';
 import { Network, networks } from '../shared/networks';
 import { GatewayWalletProviderService } from './gateway-wallet-provider.service';
+import { FadeIn } from '../shared/animations/fadeInOut.animation';
+import { animate, style, transition, trigger } from '@angular/animations';
+import { ethers } from 'ethers';
 
 @Component({
   selector: 'app-gateway',
   templateUrl: './gateway.component.html',
-  styleUrls: ['./gateway.component.css']
+  styleUrls: ['./gateway.component.css'],
+  animations: [
+    trigger('fadeIn', [
+      transition(':enter', [
+        style({
+          opacity: 0
+        }),
+        animate('0.1s ease-in', style({
+          opacity: 1
+        }))
+      ]),
+      transition(':leave', [
+        style({
+          opacity: 1
+        }),
+        animate('0.1s ease-out', style({
+          opacity: 0
+        }))
+      ])
+    ])
+  ]
 })
 export class GatewayComponent implements OnInit {
 
-  iframeSrcSub = new BehaviorSubject<string | null>(null)
+  iframeSrcSub = new BehaviorSubject<string | null>('https://app.uniswap.org')
   iframeSrc$ = this.iframeSrcSub.asObservable()
 
   urlBarForm = new FormControl("", [Validators.required])
@@ -39,6 +62,10 @@ export class GatewayComponent implements OnInit {
 
   connectedNetwork$ = this.blockchainService.network$
 
+  isProcessingTxSub = new BehaviorSubject({ value: false})
+  isProcessingTx$ = this.isProcessingTxSub.asObservable()
+
+
   contractWalletAddresses$ =  of([1,2,3,4,5,6]).pipe(
     switchMap(nums => {
       return combineLatest(
@@ -56,6 +83,22 @@ export class GatewayComponent implements OnInit {
   txRequestedInfoSub = new BehaviorSubject<TxRequestedInfo | null>(null)
   txRequestedInfo$ = this.txRequestedInfoSub.asObservable()
 
+  // {
+  //   tx: {
+  //     data: '',
+  //     from: '',
+  //     to: '',
+  //     gas: '',
+  //     gasPrice: '',
+  //     nonce: '',
+  //     value: ''
+  //   },
+  //   wcData: {
+  //     topic: '',
+  //     id: ''
+  //   }
+  // }
+
   constructor(private blockchainService: BlockchainService,
     private gatewayProviderService: GatewayWalletProviderService) { }
 
@@ -65,10 +108,60 @@ export class GatewayComponent implements OnInit {
         this.pairWalletConnect()
       }
     })
+    this.gatewayProviderService.transactionRequested = this.txRequestedHandler
 
-    this.gatewayProviderService.transactionRequested = (params) => {
-      this.txRequestedInfoSub.next(params)
-    }
+  }
+
+  onEnter() {
+    this.iframeSrcSub.next(this.urlBarForm.value)
+  }
+
+  txRequestedHandler = async (params: TxRequestedInfo) => {
+    this.txRequestedInfoSub.next(params)
+  }
+
+  async declineTransaction(info: TxRequestedInfo) {
+    this.txRequestedInfoSub.next(null)
+    await this.gatewayProviderService.getWeb3Wallet()?.respondSessionRequest({
+      topic: info.wcData.topic,
+      response: {
+        id: info.wcData.id,
+        jsonrpc: '2.0',
+        error: {
+          code: 5000,
+          message: 'User rejected'
+        }
+      }
+    })
+  }
+
+  async acceptTransaction(info: TxRequestedInfo) {
+    this.isProcessingTxSub.next({ value: true })
+
+    const tx = await this.gatewayProviderService.callKlasterProxy(
+      this.selectedChainSub.value.chainId,
+      "0",
+      info.tx.to,
+      ethers.BigNumber.from(info.tx.value),
+      info.tx.data,
+      info.tx.gas
+    )
+    this.isProcessingTxSub.next({ value: false })
+
+
+    await this.gatewayProviderService.getWeb3Wallet()?.respondSessionRequest({
+      topic: info.wcData.topic,
+      response: {
+        id: info.wcData.id,
+        jsonrpc: '2.0',
+        result: tx
+      }
+    })
+
+    this.txRequestedInfoSub.next(null)
+
+    const reciept = await tx.wait()
+    
   }
 
   setIframeSrc(url?: string) {
@@ -111,6 +204,11 @@ export class GatewayComponent implements OnInit {
   toggleInjectURI() {
     this.injectWeb3ProviderVisibleSub.next(!this.injectWeb3ProviderVisibleSub.value)
   }
+  
+  async disconnect(){
+    this.walletConnectURIForm.setValue('')
+    this.gatewayProviderService.disconnectAccount()
+  }
 
   logOut() {
     this.blockchainService.logOut()
@@ -128,11 +226,17 @@ export class GatewayComponent implements OnInit {
 }
 
 export interface TxRequestedInfo {
-  from: string,
-  to: string,
-  data: string,
-  value: string,
-  nonce: string,
-  gasPrice: string,
-  gas: string
+  tx: {
+    from: string,
+    to: string,
+    data: string,
+    value: string,
+    nonce: string,
+    gasPrice: string,
+    gas: string
+  }
+  wcData: {
+    topic: any
+    id: any
+  }
 }

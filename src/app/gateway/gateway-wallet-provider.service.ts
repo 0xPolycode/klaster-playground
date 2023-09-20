@@ -9,6 +9,7 @@ import { networks } from '../shared/networks';
 import { BlockchainService } from '../shared/blockchain.service';
 import { ethers } from 'ethers';
 import { TxRequestedInfo } from './gateway.component';
+import { KLASTER_PROXY_ADDRESS } from '../shared/contract-addresses';
 const KlasterProxyFactoryABI = require('../../assets/abis/KlasterProxyFactoryABI.json')
 
 @Injectable({
@@ -47,6 +48,7 @@ export class GatewayWalletProviderService {
       }
     ).then(wallet => {
       this.web3WalletSub.next(wallet)
+      this.handleTxRequests()
     })
     const storedSession = localStorage.getItem(this.SESSION_STORE_KEY)
     if((storedSession != "undefined") && (storedSession != null)) {
@@ -59,24 +61,54 @@ export class GatewayWalletProviderService {
 
   handleTxRequests() {
 
-    this.web3WalletSub.value!.on('session_request', async event => {
+    this.web3WalletSub.value?.on('session_request', async event => {
 
       const { topic, params, id } = event
       const { request } = params
       const requestParamsMessage = request.params[0]
     
-      console.log("PARAMS: ", event)
 
       if(this.transactionRequested) { 
-        this.transactionRequested(requestParamsMessage) 
+        this.transactionRequested({
+          tx: requestParamsMessage,
+          wcData: {
+            id: id,
+            topic: topic
+          }
+        }) 
       }
     
     })
-    
   }
 
-  callKlasterProxy(chainId: number, salt: string, destAddress: string, value: number, data: string, gasLimit: string) {
+  getWeb3Wallet() {
+    return this.web3WalletSub.value
+  }
 
+  async callKlasterProxy(chainId: number, salt: string, destAddress: string, value: ethers.BigNumber, data: string, gasLimit: string) {
+    const klasterProxy = this.getKlasterProxy()
+
+    const fee = await klasterProxy['calculateFee'](
+      this.blockchainService.getAccount(),
+      chainId,
+      salt,
+      destAddress,
+      value,
+      data,
+      gasLimit
+    )
+
+    return await klasterProxy['execute'](
+      chainId,
+      salt,
+      destAddress,
+      value,
+      data,
+      gasLimit,
+      {
+        value: fee
+      }
+    )
   }
 
   async pair(uri: string, address: string) {
@@ -105,17 +137,21 @@ export class GatewayWalletProviderService {
       this.currentSessionSub.next(session)
     })
 
-    this.handleTxRequests()
-
     return await this.web3WalletSub.value?.pair({ uri: uri })
   }
 
-  async calculateWalletAddress(salt: string = ''): Promise<string> {
-    const klasterProxyFactory = new ethers.Contract(
-      '0xe31eb0adfD645a2Fe39e3732683791738151AE11',
+  private getKlasterProxy() {
+    return new ethers.Contract(
+      KLASTER_PROXY_ADDRESS,
       KlasterProxyFactoryABI,
-      this.blockchainService.provider
+      this.blockchainService.provider?.getSigner()
     )
+  }
+
+  async calculateWalletAddress(salt: string = ''): Promise<string> {
+    
+    const klasterProxyFactory = this.getKlasterProxy()
+
     return await klasterProxyFactory['calculateAddress'](
       this.blockchainService.getAccount(),
       salt
@@ -148,5 +184,18 @@ export class GatewayWalletProviderService {
         },
       })
     }
+  }
+
+  async disconnectAccount() {
+    const topic = this.currentSessionSub.value!.topic
+    this.currentSessionSub.next(undefined)
+
+    await this.web3WalletSub.value?.disconnectSession({
+      topic: topic,
+      reason: {
+        code: 6000,
+        message: 'User disconnected.',
+      }
+    })
   }
 }

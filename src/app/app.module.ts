@@ -16,7 +16,7 @@ import { PayComponent } from './pay/pay.component';
 import { LendComponent } from './lend/lend.component';
 import { GatewayComponent } from './gateway/gateway.component';
 import { SafePipe } from './shared/pipes/safe.pipe';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { attach } from "@polyflow/sdk";
 import { ExploreComponent } from './explore/explore.component';
 
@@ -39,6 +39,7 @@ import { ExploreComponent } from './explore/explore.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    BrowserAnimationsModule,
     ReactiveFormsModule
   ],
   providers: [{
