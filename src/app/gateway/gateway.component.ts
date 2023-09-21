@@ -219,7 +219,13 @@ export class GatewayComponent implements OnInit {
   }
 
   async pairWalletConnect() {
-    this.gatewayProviderService.pair(this.walletConnectURIForm.value!, this.selectedWalletAddressSub.value).then(res => {
+    const msg = "Invalid wallet connect URI"
+    const value = this.walletConnectURIForm.value
+    if(!value) { alert(msg); return }
+    if(!value.startsWith('wc:')) { alert(msg); return }
+    
+
+    this.gatewayProviderService.pair(value, this.selectedWalletAddressSub.value).then(res => {
       this.toggleInjectURI()
     })
   }
