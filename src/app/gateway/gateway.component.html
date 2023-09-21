@@ -1,12 +1,13 @@
 <div class="w-screen relative h-screen flex flex-col justify-center overflow-hidden">
     <div class="border-b  border-fuchsia-100 z-50 fixed top-0 left-0 bg-white flex flex-row justify-center w-full">
         <div class="max-w-7xl w-full flex flex-row justify-between">
-            <div class="col-span-2 flex flex-col justify-center pr-4">
+            <div class="col-span-2 flex flex-col justify-center pr-2">
                 <img class="h-6 object-contain" src="../../assets/klstr.png" alt="" srcset="">
             </div>
             
-            <div class="w-full mx-12 bg-gradient-to-r from-fuchsia-50 to-rose-50 !text-fuchsia-700 grid grid-cols-12 text-xs border-x border-fuchsia-100 items-center">
-                    <input [value]="iframeSrc$ | async" (keyup.enter)="onEnter()" placeholder="Enter your dApp URL"
+            <div class="w-full ml-4 bg-white from-fuchsia-50 to-white !text-fuchsia-700 
+                grid grid-cols-12 text-xs border-l border-fuchsia-100 items-center">
+                    <input [formControl]="urlBarForm" [value]="iframeSrc$ | async" (keyup.enter)="onEnter()" placeholder="Enter your dApp URL"
                     class="w-full flex flex-row py-3 justify-center bg-transparent col-span-4 outline-none  text-fuchsia-700
                      items-center px-8 h-full  rounded-md"/>
 
@@ -14,7 +15,7 @@
                         <div class="col-span-3 w-full h-full relative" *ngIf="contractWalletAddresses$ | async as addresses">
                             <div (click)="toggleAddressSelectorVisible()"
                                 class="flex flex-row justify-between items-center text-xs border-x border-fuchsia-100 w-full
-                             font-medium h-full hover:bg-fuchsia-100  transition-all px-5 cursor-pointer">
+                             font-medium h-full hover:bg-fuchsia-50  transition-all px-5 cursor-pointer">
                                 <div class="flex flex-row gap-x-3 items-center text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-700 to-rose-700">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                                         stroke="currentColor" class="w-4 h-4">
@@ -35,7 +36,7 @@
                                     </svg>
                                 </div>
                             </div>
-                            <div *ngIf="addressSelectorVisible$ | async"
+                            <div @fadeInOut *ngIf="addressSelectorVisible$ | async"
                                 class="absolute flex flex-col top-12 border rounded-md text-xs text-slate-700 font-medium w-72 right-0 bg-white pt-4">
                                 <div class="uppercase text-slate-500 px-4 flex flex-row justify-between items-center">
                                     <div class="flex flex-row items-center gap-x-2">
@@ -71,7 +72,7 @@
                      <ng-container *ngIf="iframeSrc$ | async">
                         <div *ngIf="currentSession$ | async as session; else noSession" class="col-span-3 w-full h-full relative">
                             <div (click)="toggleChainSelector()" *ngIf="selectedChain$ | async as chain" 
-                            class="flex flex-row items-center justify-center h-full w-full hover:bg-rose-100 text-rose-700
+                            class="flex flex-row items-center justify-center h-full w-full hover:bg-rose-50 text-rose-700
                                 px-4 text-xs font-medium gap-x-3 border-r border-fuchsia-100 cursor-pointer">
                                 <img class="h-4" src="../../assets/{{chain.logoUri}}" alt="" srcset="">
                                 <div>{{chain.name}}</div>
@@ -84,7 +85,7 @@
             
                                 </div>
                             </div>
-                            <div *ngIf="chainSelectorVisible$ | async"
+                            <div @fadeInOut *ngIf="chainSelectorVisible$ | async"
                                 class="absolute top-12 border w-60 border-slate-200 text-slate-600 rounded-md left-0 bg-white text-xs    font-medium">
                                 <div (click)="setChain(chain)" class="flex flex-row items-center
                                     hover:bg-slate-50 cursor-pointer rounded-md px-8 gap-x-3 py-5" *ngFor="let chain of chains">
@@ -96,7 +97,7 @@
                      </ng-container>
 
                     <div (click)="disconnect()" *ngIf="currentSession$ | async" 
-                    class="flex flex-row h-full rounded-r-md col-span-2 justify-center cursor-pointer items-center hover:bg-rose-100 text-rose-700">
+                    class="flex flex-row h-full border-rose-100 col-span-2 border-r justify-center cursor-pointer items-center hover:bg-rose-50 text-rose-700">
                         <svg  xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" 
                             class="w-5 h-5 cursor-pointer ">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5.636 5.636a9 9 0 1012.728 0M12 3v9" />
@@ -104,9 +105,55 @@
                           <div class="ml-2 font-medium">Disconnect</div>
                           
                     </div>
+
+            
             </div>
 
-            <div></div>
+            <div class=" border-rose-200 relative
+             h-full px-4 text-center flex cursor-pointer hover:bg-rose-50
+             flex-row justify-center items-center text-rose-700">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                    <path d="M5.625 3.75a2.625 2.625 0 100 5.25h12.75a2.625 2.625 0 000-5.25H5.625zM3.75 11.25a.75.75 0 000 1.5h16.5a.75.75 0 000-1.5H3.75zM3 15.75a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75zM3.75 18.75a.75.75 0 000 1.5h16.5a.75.75 0 000-1.5H3.75z" />
+                </svg>   
+                <div class="bg-white absolute top-10 right-0 text-slate-600 hidden
+                mt-2 flex flex-col items-start p-4 text-xs w-96 border rounded-md">
+                    <div class="uppercase font-medium flex flex-row gap-x-2 items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                            <path d="M5.625 3.75a2.625 2.625 0 100 5.25h12.75a2.625 2.625 0 000-5.25H5.625zM3.75 11.25a.75.75 0 000 1.5h16.5a.75.75 0 000-1.5H3.75zM3 15.75a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75zM3.75 18.75a.75.75 0 000 1.5h16.5a.75.75 0 000-1.5H3.75z" />
+                        </svg>                          
+                        My transactions queue
+                    </div>
+                    <div class="grid grid-cols-12 mt-3 text-start w-full">
+                        <div class="col-span-3">
+                            Tx Hash
+                        </div>
+                        <div class="col-span-4">
+                            Source chain
+                        </div>
+                        <div class="col-span-3">
+                            Dest. chain
+                        </div>
+                        <div class="col-span-1">
+                            Status
+                        </div>
+                    </div>
+                    <hr class="my-2 w-full border-slate-100">
+                    <div class="grid grid-cols-12 mt-3 text-start w-full">
+                        <div class="col-span-3">
+                            0x327...223
+                        </div>
+                        <div class="col-span-4">
+                            <img class="h-4" src="../../assets/matic.png" alt="" srcset="">
+                        </div>
+                        <div class="col-span-3">
+                            Dest. chain
+                        </div>
+                        <div class="col-span-1">
+                            Status
+                        </div>
+                    </div>
+                </div>               
+            </div>
 
             <div class="col-span-1 w-64 font-medium flex flex-col justify-center">
                 <div *ngIf="connectedNetwork$ | async as network" (click)="logOut()" 
@@ -174,24 +221,30 @@
 
 </ng-template>
 
-<div [@fadeIn] *ngIf="txRequestedInfo$ | async as info" class="fixed top-0 flex flex-row justify-center items-end
- left-0 bg-[rgba(0,0,0,0.4)] backdrop-blur-[2px] w-screen h-screen ">
+<div @slideInLeft *ngIf="txRequestedInfo$ | async as info" class="fixed top-0 flex flex-row justify-end items-start
+ left-0  backdrop-blur-[2px] w-screen h-screen ">
 
-    <div *ngIf="isProcessingTx$ | async as processingTx" class="w-full bg-gradient-to-t from-slate-50 to-white flex flex-col
-     px-8 items-center justify-between rounded-t-2xl h-40 shadow-xl">
+    <div *ngIf="isProcessingTx$ | async as processingTx"
+    [class.!justify-center]="processingTx.value" 
+    class="bg-white z-[200] px-14 flex flex-col
+     items-center justify-between rounded-t-2xl h-full shadow-xl">
 
         <div class="mt-6"></div>
-        <div *ngIf="!processingTx.value" class="max-w-7xl w-full flex text-sm flex-row items-center justify-between">
+        <div *ngIf="!processingTx.value" class="max-w-7xl mt-12 w-full flex text-sm flex-col h-full justify-start gap-y-12">
             
+            <div class="text-lg font-bold uppercase text-transparent bg-clip-text bg-gradient-to-r from-rose-600 to-fuchsia-700">
+                New transaction request
+            </div>
+
             <div *ngIf="iframeSrc$ | async as src">
-                <div class="flex flex-col h-full px-8 text-rose-600 gap-y-1">
-                    <div class="text-xs font-semibold  flex flex-row items-center gap-x-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                <div class="flex flex-col h-full text-rose-600 gap-y-2">
+                    <div class="text-sm uppercase font-semibold  flex flex-row items-center gap-x-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
                           </svg>
                           
                           
-                        Transaction request by
+                        App
                     </div>
                     <div class="text-base text-slate-500">
                         {{src}}
@@ -199,44 +252,53 @@
                 </div>
             </div>
 
-            <div class="flex flex-row items-center">
-                <div *ngIf="connectedNetwork$ | async as connected" class="flex flex-col gap-y-1">
-                    <div class="text-xs font-semibold  flex flex-row text-rose-600 items-center gap-x-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+            <div class="flex flex-col justify-center">
+                <div *ngIf="connectedNetwork$ | async as connected" class="flex flex-col gap-y-2">
+                    <div class="text-sm uppercase font-semibold  flex flex-row text-rose-600 items-center gap-x-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                           </svg>
                           
                           
-                        Cross-chain transaction
+                        Origin network
                     </div>
                     <div *ngIf="selectedChain$ | async as selected" 
                         class="flex text-slate-600 flex-row text-base items-center gap-x-2">
                         <img class="h-4" src="../../assets/{{connected.logoUri}}" alt="" srcset="">
                         <div >{{connected.name}}</div>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mx-3">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                          </svg>                          
+                    </div>
+                    <div class="text-sm uppercase mt-10 font-semibold  flex flex-row text-rose-600 items-center gap-x-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                          </svg>
+                          
+                          
+                          
+                        Destination network
+                    </div>
+                    <div *ngIf="selectedChain$ | async as selected" 
+                        class="flex text-slate-600 flex-row text-base items-center gap-x-2">
                         <img class="h-4" src="../../assets/{{selected.logoUri}}" alt="" srcset="">
-                        <div>{{selected.name}}</div>
+                        <div >{{selected.name}}</div>
                     </div>
                 </div>
             </div>
 
-            <div class="flex flex-row gap-x-8">
-                <div class="flex flex-col gap-y-1">
-                    <div class="text-xs font-semibold  flex flex-row text-rose-600 items-center gap-x-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+            <div class="flex flex-col gap-y-8">
+                <div class="flex flex-col gap-y-2">
+                    <div class="text-sm uppercase font-semibold  flex flex-row text-rose-600 items-center gap-x-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                           
                           
-                        Est. duration
+                        Estimated duration
                     </div>
-                    <div class="text-base font-bold text-slate-600">22m 30s</div>
+                    <div class="text-base  text-slate-600">22m 30s</div>
                 </div>
                 <div class="flex flex-col gap-y-1">
-                    <div class="text-xs font-semibold  flex flex-row text-rose-600 items-center gap-x-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                    <div class="text-sm uppercase font-semibold  flex flex-row text-rose-600 items-center gap-x-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
                             <path d="M12 7.5a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" />
                             <path fill-rule="evenodd" d="M1.5 4.875C1.5 3.839 2.34 3 3.375 3h17.25c1.035 0 1.875.84 1.875 1.875v9.75c0 1.036-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 011.5 14.625v-9.75zM8.25 9.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM18.75 9a.75.75 0 00-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 00.75-.75V9.75a.75.75 0 00-.75-.75h-.008zM4.5 9.75A.75.75 0 015.25 9h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H5.25a.75.75 0 01-.75-.75V9.75z" clip-rule="evenodd" />
                             <path d="M2.25 18a.75.75 0 000 1.5c5.4 0 10.63.722 15.6 2.075 1.19.324 2.4-.558 2.4-1.82V18.75a.75.75 0 00-.75-.75H2.25z" />
@@ -244,35 +306,46 @@
                           
                         Total cost
                     </div>
-                    <div class="text-base font-bold text-slate-600">$3.72</div>
+                    <div class="text-base flex flex-col text-slate-600">
+                        <div class="text-xl font-semibold text-slate-500">
+                            $3.37
+                        </div>
+                        <div class="text-xs">
+                            0.0057 ETH
+                        </div>
+                    </div>
                 </div>
             </div>
 
             
 
-            <div class="flex flex-row gap-x-4 items-center text-xs font-semibold">
-                <div (click)="declineTransaction(info)" class="h-10 pl-3 pr-5 gap-x-2 rounded-full hover:bg-rose-700 cursor-pointer bg-rose-500 flex flex-row items-center justify-center text-white">
+            
+        </div>
+
+        <div *ngIf="!processingTx.value" class="flex mb-12 flex-col gap-x-4 items-center text-xs font-semibold w-full">
+            <div class="flex flex-row w-full gap-x-4 items-center">
+                <div (click)="declineTransaction(info)" 
+                class="h-10 gap-x-2 rounded-md w-full hover:bg-rose-700 cursor-pointer bg-rose-500 flex flex-row items-center justify-center text-white">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       <div>Decline</div>                      
                 </div>
-                <div (click)="acceptTransaction(info)" class="h-10 pl-3 pr-5 gap-x-2 rounded-full hover:bg-green-700 cursor-pointer bg-green-500 flex flex-row items-center justify-center text-white">
+                <div (click)="acceptTransaction(info)" class="h-10 rounded-md gap-x-2 w-full hover:bg-green-700 cursor-pointer bg-green-500 flex flex-row items-center justify-center text-white">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       <div>Accept</div>
                 </div>
-
             </div>
+            
+            <img class="h-4 mt-8" src="../../assets/klstr.png" alt="" srcset="">
+
         </div>
         
-        <div class="flex flex-row justify-center items-center" *ngIf="processingTx.value">
-            Processing transaction...
-        </div>
-
-        <div class="w-full flex flex-row justify-center">
-            <img class="h-3 mb-6" src="../../assets/klstr.png" alt="" srcset="">
+        <div class="flex flex-col justify-center items-center" *ngIf="processingTx.value">
+            <div class="text-slate-500 px-16">Please sign <br> transaction</div>
+            <img class="h-4 mt-8" src="../../assets/klstr.png" alt="" srcset="">
         </div>
 
     </div>

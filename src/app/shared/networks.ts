@@ -12,18 +12,30 @@ export interface Network {
 }
 
 export const networks: Network[] = [
-    // { 
-    //     chainId: 80001, 
-    //     name: 'Mumbai Matic', 
-    //     logoUri: 'matic.png', 
-    //     rpcUrls: ['https://polygon-mumbai-bor.publicnode.com'],
-    //     nativeCurrency: {
-    //         name: 'MATIC',
-    //         symbol: 'MATIC',
-    //         decimals: 18
-    //     },
-    //     blockExploreUrls: ['https://polygonscan.com/']
-    // },
+    { 
+        chainId: 11155111, 
+        name: 'Ethereum Sepolia', 
+        logoUri: 'eth.png', 
+        rpcUrls: ['https://ethereum-sepolia.blockpi.network/v1/rpc/public'],
+        nativeCurrency: {
+            name: 'ETH',
+            symbol: 'ETH',
+            decimals: 18
+        },
+        blockExploreUrls: ['https://sepolia.etherscan.io/']
+    },
+    { 
+        chainId: 80001, 
+        name: 'Mumbai Matic', 
+        logoUri: 'matic.png', 
+        rpcUrls: ['https://polygon-mumbai-bor.publicnode.com'],
+        nativeCurrency: {
+            name: 'MATIC',
+            symbol: 'MATIC',
+            decimals: 18
+        },
+        blockExploreUrls: ['https://polygonscan.com/']
+    },
     {
         chainId: 43113,
         name: 'Avalanche Fuji',
@@ -48,18 +60,7 @@ export const networks: Network[] = [
         },
         blockExploreUrls: ['https://optimistic.etherscan.io/']
     },
-    { 
-        chainId: 11155111, 
-        name: 'Ethereum Sepolia', 
-        logoUri: 'eth.png', 
-        rpcUrls: ['https://ethereum-sepolia.blockpi.network/v1/rpc/public'],
-        nativeCurrency: {
-            name: 'ETH',
-            symbol: 'ETH',
-            decimals: 18
-        },
-        blockExploreUrls: ['https://sepolia.etherscan.io/']
-    }
+    
 ]
 
 export function getNetworkFromChainID(chainId: number): Network | undefined {

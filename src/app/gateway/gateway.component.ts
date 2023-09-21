@@ -13,12 +13,32 @@ import { ethers } from 'ethers';
   templateUrl: './gateway.component.html',
   styleUrls: ['./gateway.component.css'],
   animations: [
-    trigger('fadeIn', [
+    trigger('slideInLeft', [
+      transition(':enter', [
+        style({
+          transform: 'translateX(100%)'
+        }),
+        animate('0.3s ease-in', style({
+          transform: 'translateX(0%)'
+        }))
+      ]),
+      transition(':leave', [
+        style({
+          opacity: 1,
+          transform: 'translateX(0)'
+        }),
+        animate('0.3s ease-out', style({
+          opacity: 1,
+          transform: 'translateX(100%)'
+        }))
+      ])
+    ]),
+    trigger('fadeInOut', [
       transition(':enter', [
         style({
           opacity: 0
         }),
-        animate('0.1s ease-in', style({
+        animate('0.05s ease-in', style({
           opacity: 1
         }))
       ]),
@@ -26,7 +46,7 @@ import { ethers } from 'ethers';
         style({
           opacity: 1
         }),
-        animate('0.1s ease-out', style({
+        animate('0.05s ease-out', style({
           opacity: 0
         }))
       ])
@@ -35,7 +55,7 @@ import { ethers } from 'ethers';
 })
 export class GatewayComponent implements OnInit {
 
-  iframeSrcSub = new BehaviorSubject<string | null>('https://app.uniswap.org')
+  iframeSrcSub = new BehaviorSubject<string | null>(null)
   iframeSrc$ = this.iframeSrcSub.asObservable()
 
   urlBarForm = new FormControl("", [Validators.required])
@@ -62,7 +82,7 @@ export class GatewayComponent implements OnInit {
 
   connectedNetwork$ = this.blockchainService.network$
 
-  isProcessingTxSub = new BehaviorSubject({ value: false})
+  isProcessingTxSub = new BehaviorSubject({ value: false })
   isProcessingTx$ = this.isProcessingTxSub.asObservable()
 
 
@@ -82,22 +102,6 @@ export class GatewayComponent implements OnInit {
 
   txRequestedInfoSub = new BehaviorSubject<TxRequestedInfo | null>(null)
   txRequestedInfo$ = this.txRequestedInfoSub.asObservable()
-
-  // {
-  //   tx: {
-  //     data: '',
-  //     from: '',
-  //     to: '',
-  //     gas: '',
-  //     gasPrice: '',
-  //     nonce: '',
-  //     value: ''
-  //   },
-  //   wcData: {
-  //     topic: '',
-  //     id: ''
-  //   }
-  // }
 
   constructor(private blockchainService: BlockchainService,
     private gatewayProviderService: GatewayWalletProviderService) { }
@@ -121,7 +125,7 @@ export class GatewayComponent implements OnInit {
   }
 
   async declineTransaction(info: TxRequestedInfo) {
-    this.txRequestedInfoSub.next(null)
+    setTimeout(() => { this.txRequestedInfoSub.next(null) }, 100)
     await this.gatewayProviderService.getWeb3Wallet()?.respondSessionRequest({
       topic: info.wcData.topic,
       response: {
