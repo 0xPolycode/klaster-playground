@@ -10,7 +10,7 @@ import { GatewayComponent } from './gateway/gateway.component';
 import { ExploreComponent } from './explore/explore.component';
 
 const routes: Routes = [
-  { path: '', component: DeployComponent },
+  { path: '', component: GatewayComponent },
   { path: 'deploy', component: DeployComponent },
   { path: 'bridge', component: BridgeComponent },
   { path: 'cctx', component: CrossChainTxComponent },
