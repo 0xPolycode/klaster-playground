@@ -7,6 +7,7 @@ import { GatewayWalletProviderService } from './gateway-wallet-provider.service'
 import { FadeIn } from '../shared/animations/fadeInOut.animation';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { ethers } from 'ethers';
+import { TopbarService } from './topbar-service.service';
 
 @Component({
   selector: 'app-gateway',
@@ -64,60 +65,33 @@ export class GatewayComponent implements OnInit {
 
   chains = networks
 
-  selectedChainSub = new BehaviorSubject(this.chains[0])
-  selectedChain$ = this.selectedChainSub.asObservable()
-
-  chainSelectorVisibleSub = new BehaviorSubject(false)
-  chainSelectorVisible$ = this.chainSelectorVisibleSub.asObservable()
-
-  injectWeb3ProviderVisibleSub = new BehaviorSubject(false)
-  injectWeb3ProviderVisible$ = this.injectWeb3ProviderVisibleSub.asObservable()
-
-  walletConnectURIForm = new FormControl('', [])
-
-  currentSession$ = this.gatewayProviderService.currentSession$
-
-  addressSelectorVisibleSub = new BehaviorSubject(false)
-  addressSelectorVisible$ = this.addressSelectorVisibleSub.asObservable()
-
+  selectedNetwork$ = this.topbarService.selectedNetwork$
   connectedNetwork$ = this.blockchainService.network$
 
   isProcessingTxSub = new BehaviorSubject({ value: false })
   isProcessingTx$ = this.isProcessingTxSub.asObservable()
 
-
-  contractWalletAddresses$ =  of([1,2,3,4,5,6]).pipe(
-    switchMap(nums => {
-      return combineLatest(
-        nums.map(num => { return from(this.gatewayProviderService.calculateWalletAddress(num.toString())) }) 
-      )
-    }),
-    tap(addresses => {
-      this.selectedWalletAddressSub.next(addresses[0])
-    })
-  )
-
-  selectedWalletAddressSub = new BehaviorSubject('')
-  selectedWalletAddress$ = this.selectedWalletAddressSub.asObservable()
+  txQueueVisibleSub = new BehaviorSubject(false)
+  txQueueVisible$ = this.txQueueVisibleSub.asObservable()
 
   txRequestedInfoSub = new BehaviorSubject<TxRequestedInfo | null>(null)
   txRequestedInfo$ = this.txRequestedInfoSub.asObservable()
 
+
   constructor(private blockchainService: BlockchainService,
-    private gatewayProviderService: GatewayWalletProviderService) { }
+    private gatewayProviderService: GatewayWalletProviderService,
+    private topbarService: TopbarService) { }
 
   ngOnInit(): void {
-    this.walletConnectURIForm.valueChanges.subscribe(value => {
-      if(value?.startsWith('wc')) {
-        this.pairWalletConnect()
-      }
-    })
     this.gatewayProviderService.transactionRequested = this.txRequestedHandler
-
   }
 
   onEnter() {
     this.iframeSrcSub.next(this.urlBarForm.value)
+  }
+
+  clearIframe() {
+    this.iframeSrcSub.next('')
   }
 
   txRequestedHandler = async (params: TxRequestedInfo) => {
@@ -142,11 +116,18 @@ export class GatewayComponent implements OnInit {
   async acceptTransaction(info: TxRequestedInfo) {
     this.isProcessingTxSub.next({ value: true })
 
+    const network = this.topbarService.getSelectedNetwork()
+    if(!network) { alert("Couldn't fetch network"); return }
+
+    const value = info.tx.value ?
+      ethers.BigNumber.from(info.tx.value) :
+      ethers.BigNumber.from(0)
+
     const tx = await this.gatewayProviderService.callKlasterProxy(
-      this.selectedChainSub.value.chainId,
+      network.chainId,
       "0",
       info.tx.to,
-      ethers.BigNumber.from(info.tx.value),
+      value,
       info.tx.data,
       info.tx.gas
     )
@@ -177,57 +158,16 @@ export class GatewayComponent implements OnInit {
     }
   }
 
-  toggleAddressSelectorVisible() {
-    this.addressSelectorVisibleSub.next(!this.addressSelectorVisibleSub.value)
+
+
+  toggleTxQueueVisible() {
+    this.txQueueVisibleSub.next(!this.txQueueVisibleSub.value)
   }
 
-  setChain(chain: Network) {
-    this.dispatchEvent(chain)
-    this.selectedChainSub.next(chain)
-    this.gatewayProviderService.switchChain(chain.chainId).then(_ => {
-    })
-    this.toggleChainSelector()
-  }
 
-  setSelectedWalletAddress(address: string) {
-    this.selectedWalletAddressSub.next(address)
-    this.gatewayProviderService.switchAccount(address)
-    this.toggleAddressSelectorVisible()
-  }
-
-  dispatchEvent(chain: Network) {
-    (this.blockchainService.provider?.provider as any)
-      .emit('network', 
-        [this.selectedChainSub.value.chainId, chain.chainId])    
-  }
-
-  toggleChainSelector() {
-    this.chainSelectorVisibleSub.next(!this.chainSelectorVisibleSub.value)
-  }
-
-  toggleInjectURI() {
-    this.injectWeb3ProviderVisibleSub.next(!this.injectWeb3ProviderVisibleSub.value)
-  }
-  
-  async disconnect(){
-    this.walletConnectURIForm.setValue('')
-    this.gatewayProviderService.disconnectAccount()
-  }
 
   logOut() {
     this.blockchainService.logOut()
-  }
-
-  async pairWalletConnect() {
-    const msg = "Invalid wallet connect URI"
-    const value = this.walletConnectURIForm.value
-    if(!value) { alert(msg); return }
-    if(!value.startsWith('wc:')) { alert(msg); return }
-    
-
-    this.gatewayProviderService.pair(value, this.selectedWalletAddressSub.value).then(res => {
-      this.toggleInjectURI()
-    })
   }
 
   async switchChain(chainID: number) {

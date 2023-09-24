@@ -19,6 +19,9 @@ import { SafePipe } from './shared/pipes/safe.pipe';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { attach } from "@polyflow/sdk";
 import { ExploreComponent } from './explore/explore.component';
+import { NetworkSelectorTopbarModuleComponent } from './gateway/network-selector-topbar-module/network-selector-topbar-module.component';
+import { TxQueueTopbarModuleComponent } from './gateway/tx-queue-topbar-module/tx-queue-topbar-module.component';
+import { AccountsPreviewTopbarModuleComponent } from './gateway/accounts-preview-topbar-module/accounts-preview-topbar-module.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +38,9 @@ import { ExploreComponent } from './explore/explore.component';
     GatewayComponent,
     SafePipe,
     ExploreComponent,
+    NetworkSelectorTopbarModuleComponent,
+    TxQueueTopbarModuleComponent,
+    AccountsPreviewTopbarModuleComponent
   ],
   imports: [
     BrowserModule,

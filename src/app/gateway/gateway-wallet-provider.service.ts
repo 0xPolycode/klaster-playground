@@ -30,6 +30,7 @@ export class GatewayWalletProviderService {
   currentSession$ = this.currentSessionSub.asObservable().pipe(
     tap(session => {
       localStorage.setItem(this.SESSION_STORE_KEY, JSON.stringify(session))
+      console.log(session)
     })
   )
 
@@ -85,7 +86,13 @@ export class GatewayWalletProviderService {
     return this.web3WalletSub.value
   }
 
-  async callKlasterProxy(chainId: number, salt: string, destAddress: string, value: ethers.BigNumber, data: string, gasLimit: string) {
+  async callKlasterProxy(chainId: number, 
+    salt: string, 
+    destAddress: string, 
+    value: ethers.BigNumber, 
+    data: string, 
+    gasLimit: string) {
+
     const klasterProxy = this.getKlasterProxy()
 
     const fee = await klasterProxy['calculateFee'](
@@ -98,15 +105,34 @@ export class GatewayWalletProviderService {
       gasLimit
     )
 
+    // Since the Klaster contracts are lazy loaded, the first transactions need to have enough gas to execute the 
+    // transaction *AND* to deploy the Klaster Wallet contracts. This code checks if there is a contract deployed
+    // on the Klaster controller address and, if not, it will adjust the gas limit to include the additional gas
+    // required for the deployment of contracts.
+    const KLASTER_DEPLOYMENT_GAS_REQUIREMENT = 1000000
+
+    var adjustedGasLimit = ethers.BigNumber.from(gasLimit)
+    const interactionAddress = await this.calculateWalletAddress(salt)
+    const code = await this.blockchainService.provider?.getCode(interactionAddress)
+
+    // If code is 0x the address doesn't have a contract deployed
+    if(code == '0x') {
+      adjustedGasLimit = adjustedGasLimit.add(
+        ethers.BigNumber.from(KLASTER_DEPLOYMENT_GAS_REQUIREMENT)
+      )
+    }
+    
+    
     return await klasterProxy['execute'](
       chainId,
       salt,
       destAddress,
       value,
       data,
-      gasLimit,
+      adjustedGasLimit,
       {
-        value: fee
+        value: fee,
+        gasLimit: "500000"
       }
     )
   }
@@ -120,12 +146,13 @@ export class GatewayWalletProviderService {
         proposal: params,
         supportedNamespaces: {
           eip155: {
-            chains: networks.map(network => { return `eip155:${network.chainId}` }).concat(['eip155:1']),
-            methods: ['eth_sendTransaction', 'personal_sign', 'eth_signTypedData'],
+            chains: networks.map(network => { return `eip155:${network.chainId}` })
+              .concat(['eip155:1', 'eip155:42161']),
+            methods: ['eth_sendTransaction', 'personal_sign', 'eth_signTypedData', 'eth_sign'],
             events: ['accountsChanged', 'chainChanged'],
             accounts: networks.map(network => 
               { return `eip155:${network.chainId}:${address}` })
-              .concat([`eip155:1:${address}`])
+              .concat([`eip155:1:${address}`,`eip155:42161:${address}`,])
           }
         }
       })
@@ -198,4 +225,10 @@ export class GatewayWalletProviderService {
       }
     })
   }
+}
+
+export interface WCSession {
+  domain: string,
+  created: Date,
+  session: SessionTypes.Struct
 }

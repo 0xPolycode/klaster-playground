@@ -10,15 +10,14 @@ import { GatewayComponent } from './gateway/gateway.component';
 import { ExploreComponent } from './explore/explore.component';
 
 const routes: Routes = [
-  { path: '', component: GatewayComponent },
-  { path: 'deploy', component: DeployComponent },
-  { path: 'bridge', component: BridgeComponent },
-  { path: 'cctx', component: CrossChainTxComponent },
-  { path: 'pay', component: PayComponent },
-  { path: 'lend', component: LendComponent },
-  { path: 'wrap', component: WrapComponent },
+  { path: 'dapps/deploy', component: DeployComponent },
+  { path: 'dapps/bridge', component: BridgeComponent },
+  { path: 'dapps/cctx', component: CrossChainTxComponent },
+  { path: 'dapps/pay', component: PayComponent },
+  { path: 'dapps/lend', component: LendComponent },
+  { path: 'dapps/wrap', component: WrapComponent },
   { path: 'gateway', component: GatewayComponent },
-  { path: 'explore', component: ExploreComponent }
+  { path: 'dapps/explore', component: ExploreComponent }
 ];
 
 @NgModule({
