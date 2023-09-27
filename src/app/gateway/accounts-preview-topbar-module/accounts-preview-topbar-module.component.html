@@ -45,6 +45,7 @@
                       </svg>                      
                 </div>
                 <div (click)="setSelectedWalletAddress(address)"
+                [class.bg-slate-50]="selected === address"
                  class="flex flex-row justify-between cursor-pointer hover:bg-slate-50 py-3 pl-2 border-l border-b border-slate-100 col-span-6 pr-4">
                     <div class="font-mono font-medium">{{address | shorten:8:4}}</div>
                     <div class="text-indigo-700" *ngIf="address === selected">

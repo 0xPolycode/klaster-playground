@@ -5,3 +5,7 @@
 .iframe-w {
     width: calc(100% - 16px);
 }
+
+.sidebar-h {
+    height: calc(100% - 40px - 40px);
+}

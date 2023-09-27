@@ -77,6 +77,10 @@ export class GatewayComponent implements OnInit {
   txRequestedInfoSub = new BehaviorSubject<TxRequestedInfo | null>(null)
   txRequestedInfo$ = this.txRequestedInfoSub.asObservable()
 
+  currentSession$ = this.gatewayProviderService.currentSession$.pipe(
+    tap(s => s?.peer.metadata.name)
+  )
+
 
   constructor(private blockchainService: BlockchainService,
     private gatewayProviderService: GatewayWalletProviderService,
@@ -134,14 +138,15 @@ export class GatewayComponent implements OnInit {
     this.isProcessingTxSub.next({ value: false })
 
 
-    await this.gatewayProviderService.getWeb3Wallet()?.respondSessionRequest({
-      topic: info.wcData.topic,
-      response: {
-        id: info.wcData.id,
-        jsonrpc: '2.0',
-        result: tx
-      }
-    })
+    await this.gatewayProviderService.getWeb3Wallet()
+      ?.respondSessionRequest({
+        topic: info.wcData.topic,
+        response: {
+          id: info.wcData.id,
+          jsonrpc: '2.0',
+          result: tx
+        }
+      })
 
     this.txRequestedInfoSub.next(null)
 

@@ -134,26 +134,34 @@
 
 </ng-template>
 
-<div @slideInLeft *ngIf="txRequestedInfo$ | async as info" class="fixed top-0 flex flex-row justify-end items-start
+<div @slideInLeft *ngIf="txRequestedInfo$ | async as info" class="fixed top-10 flex flex-row justify-end items-start
  left-0  backdrop-blur-[2px] w-screen h-screen ">
 
-    <div *ngIf="isProcessingTx$ | async as processingTx" [class.!justify-center]="processingTx.value" class="bg-white z-[200] px-14 flex flex-col
-     items-center justify-between rounded-t-2xl h-full shadow-xl">
+    <div *ngIf="isProcessingTx$ | async as processingTx" [class.!justify-center]="processingTx.value" 
+    class="bg-white z-[300] px-6 flex flex-col rounded-bl-md
+     items-center justify-between h-full border-rose-200 border">
 
         <div class="mt-6"></div>
         <div *ngIf="!processingTx.value"
-            class="max-w-7xl mt-12 w-full flex text-sm flex-col h-full justify-start gap-y-12">
+            class="max-w-7xl mt-12 w-full flex text-sm flex-col h-full justify-start gap-y-4">
 
             <div
-                class="text-lg font-bold uppercase text-transparent bg-clip-text bg-gradient-to-r from-rose-600 to-fuchsia-700">
+                class="text-lg font-bold pr-24 uppercase text-transparent flex flex-row gap-x-2 items-center
+                 bg-clip-text bg-gradient-to-r from-rose-600 to-fuchsia-700">
+                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" 
+                 class="w-6 h-6 text-rose-700">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                  </svg>
+                  
+                  
                 New transaction request
             </div>
 
             <div *ngIf="iframeSrc$ | async as src">
-                <div class="flex flex-col h-full text-rose-600 gap-y-2">
-                    <div class="text-sm uppercase font-semibold  flex flex-row items-center gap-x-2">
+                <div class="flex flex-col h-full p-4 rounded-md text-slate-500 bg-slate-50">
+                    <div class="text-sm font-medium  flex flex-row items-center gap-x-2">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                            stroke="currentColor" class="w-5 h-5">
+                            stroke="currentColor" class="w-4 h-4">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
                         </svg>
@@ -161,17 +169,19 @@
 
                         App
                     </div>
-                    <div class="text-base text-slate-500">
-                        {{src}}
+                    <div *ngIf="currentSession$ | async as session" class="text-base text-slate-500 flex 
+                    flex-row items-center gap-x-2">
+                    <img class="h-4" [src]="session.peer.metadata.icons[0]" alt="" srcset="">
+                        {{session.peer.metadata.name}}
                     </div>
                 </div>
             </div>
 
             <div class="flex flex-col justify-center">
-                <div *ngIf="connectedNetwork$ | async as connected" class="flex flex-col gap-y-2">
-                    <div class="text-sm uppercase font-semibold  flex flex-row text-rose-600 items-center gap-x-2">
+                <div *ngIf="connectedNetwork$ | async as connected" class="flex flex-col p-4 bg-slate-50">
+                    <div class="text-sm  font-medium  flex flex-row text-slate-500 items-center gap-x-2">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="w-5 h-5">
+                            stroke="currentColor" class="w-4 h-4">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                         </svg>
@@ -185,9 +195,9 @@
                         <div>{{connected.name}}</div>
                     </div>
                     <div
-                        class="text-sm uppercase mt-10 font-semibold  flex flex-row text-rose-600 items-center gap-x-2">
+                        class="text-sm  mt-6 font-medium  flex flex-row text-slate-500 items-center gap-x-2">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="w-5 h-5">
+                            stroke="currentColor" class="w-4 h-4">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                         </svg>
@@ -204,11 +214,11 @@
                 </div>
             </div>
 
-            <div class="flex flex-col gap-y-8">
-                <div class="flex flex-col gap-y-2">
-                    <div class="text-sm uppercase font-semibold  flex flex-row text-rose-600 items-center gap-x-2">
+            <div class="flex flex-col gap-y-4 p-4 bg-slate-50">
+                <div class="flex flex-col">
+                    <div class="text-sm  font-medium  flex flex-row text-slate-500 items-center gap-x-2">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                            stroke="currentColor" class="w-5 h-5">
+                            stroke="currentColor" class="w-4 h-4">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -218,9 +228,9 @@
                     </div>
                     <div class="text-base  text-slate-600">22m 30s</div>
                 </div>
-                <div class="flex flex-col gap-y-1">
-                    <div class="text-sm uppercase font-semibold  flex flex-row text-rose-600 items-center gap-x-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                <div class="flex flex-col">
+                    <div class="text-sm  font-medium  flex flex-row text-slate-500 items-center gap-x-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
                             <path d="M12 7.5a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" />
                             <path fill-rule="evenodd"
                                 d="M1.5 4.875C1.5 3.839 2.34 3 3.375 3h17.25c1.035 0 1.875.84 1.875 1.875v9.75c0 1.036-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 011.5 14.625v-9.75zM8.25 9.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM18.75 9a.75.75 0 00-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 00.75-.75V9.75a.75.75 0 00-.75-.75h-.008zM4.5 9.75A.75.75 0 015.25 9h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H5.25a.75.75 0 01-.75-.75V9.75z"
@@ -232,7 +242,7 @@
                         Total cost
                     </div>
                     <div class="text-base flex flex-col text-slate-600">
-                        <div class="text-xl font-semibold text-slate-500">
+                        <div class="text-lg font-semibold text-slate-500">
                             $3.37
                         </div>
                         <div class="text-xs">
@@ -269,7 +279,7 @@
                 </div>
             </div>
 
-            <img class="h-4 mt-8" src="../../assets/klstr.png" alt="" srcset="">
+            <img class="h-4 mt-8 mb-12" src="../../assets/klstr.png" alt="" srcset="">
 
         </div>
 

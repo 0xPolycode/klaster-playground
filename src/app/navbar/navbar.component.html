@@ -77,44 +77,28 @@
     <div *ngIf="address$ | async as address"
         class="w-full py-4 bg-white border-b border-slate-200 flex flex-row justify-center">
         <div class="max-w-5xl w-full">
-            <div class="w-full grid grid-cols-7 text-gradient pb-4 uppercase text-xs font-semibold">
-                <div class="col-span-4 flex flex-row gap-x-2 items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 text-rose-700">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
-                      </svg>                      
-                    Multichain dApps
-                </div>
-                <div class="col-span-3 flex text-gradient flex-row gap-x-2 items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 text-rose-700">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" />
-                      </svg>
-                                          
-                    Multichain Token Tools
-                </div>
-            </div>
+
             <div
                 class="flex flex-row justify-between text-slate-700  text-sm uppercase font-semibold">
-                <div routerLink="pay" routerLinkActive="text-rose-700"
+                <!-- <div routerLink="dapps/pay" routerLinkActive="text-rose-700"
                     class="cursor-pointer items-center flex flex-row gap-x-2">
 
                     <img class="h-6 rounded-full" src="../../assets/ppay.png" alt="" srcset="">
 
                     Pay
-                </div>
-                <div routerLink="cctx" routerLinkActive="text-rose-700"
+                </div> -->
+                <div routerLink="dapps/cctx" routerLinkActive="text-rose-700"
                     class="cursor-pointer items-center flex flex-row gap-x-2">
                     <img class="h-6" src="../../assets/uniswap.png" alt="" srcset="">
                     Swap
                 </div>
-                <div routerLink="lend" routerLinkActive="text-rose-700"
+                <!-- <div routerLink="dapps/lend" routerLinkActive="text-rose-700"
                     class="cursor-pointer items-center flex flex-row gap-x-2">
                     <img class="h-6" src="../../assets/aave.png" alt="" srcset="">
                     Lend
-                </div>
-                <div>
-                    <div class="h-full w-[1px] bg-slate-200"></div>
-                </div>
-                <div routerLink="bridge" routerLinkActive="text-rose-700"
+                </div> -->
+
+                <div routerLink="dapps/bridge" routerLinkActive="text-rose-700"
                 class="cursor-pointer items-center flex flex-row gap-x-2">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
@@ -122,7 +106,7 @@
                   
                 Bridge
             </div>
-                <div routerLink="explore" routerLinkActive="text-rose-700"
+                <div routerLink="dapps/explore" routerLinkActive="text-rose-700"
                     class="cursor-pointer items-center flex flex-row gap-x-2">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
@@ -130,7 +114,7 @@
                     Explore
                 </div>
 
-                <div routerLink="deploy" routerLinkActive="text-rose-700"
+                <div routerLink="dapps/deploy" routerLinkActive="text-rose-700"
                     class="cursor-pointer flex flex-row items-center gap-x-2">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                         stroke="currentColor" class="w-5 h-5">

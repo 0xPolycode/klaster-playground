@@ -116,12 +116,9 @@ export class GatewayWalletProviderService {
     const code = await this.blockchainService.provider?.getCode(interactionAddress)
 
     // If code is 0x the address doesn't have a contract deployed
-    if(code == '0x') {
-      adjustedGasLimit = adjustedGasLimit.add(
-        ethers.BigNumber.from(KLASTER_DEPLOYMENT_GAS_REQUIREMENT)
-      )
-    }
-    
+    adjustedGasLimit = adjustedGasLimit.add(
+      ethers.BigNumber.from(KLASTER_DEPLOYMENT_GAS_REQUIREMENT)
+    )
     
     return await klasterProxy['execute'](
       chainId,
